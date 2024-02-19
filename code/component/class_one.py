@@ -1,23 +1,51 @@
 # -*- coding: utf-8 -*-
 """
-Author: Your Name
-Date: 2023-11-18
+Author: Akshay Verma
+Date: 2024-02-19
 Version: 1.0
 """
-class Person:
-    def __init__(self, name, age) -> object:
+import psycopg2 as ps 
+
+
+class DatabaseConnector:
+    def __init__(self, username, password) -> object:
         """
 
         :rtype: object
-        :param name:
-        :param age:
+        :param username: My username
+        :param password: My password
         """
-        self.name = name
-        self.age = age
+        self.host = "complex2.phys.gwu.edu"  ## Hardcoding the host name
+        self.dbname = "don_hate" ## Hardcoding the database
+        self.username = username 
+        self.password = password
+        self.connection = None
 
-    def __str__(self):
-        """
+    def connect(self):
+        try:
+            self.connection = ps.connect(
+                dbname=self.dbname,
+                user=self.username,
+                password=self.password,
+                host=self.host
+            )
+            print("Connected to the database.")
+        except Exception as e:
+            print("Error connecting to the database:", e)
 
-        :rtype: object
+    def execute_query(self, query):
+
         """
-        return f"{self.name}({self.age})"
+        :param query: The SQL query to be executed
+        """
+        with self.connection.cursor() as cursor:
+            cursor.execute(query)
+            results = cursor.fetchall()
+        return results
+
+    def close_connection(self):
+        if self.connection:
+            self.connection.close()
+            print("Connection closed.")
+        else:
+            print("No active connection to close.")
