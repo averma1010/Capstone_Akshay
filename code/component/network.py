@@ -7,13 +7,13 @@ import streamlit as st
 
 
 def got_func(physics, start_date, end_date):
-    pre_Jan6 = pd.read_csv(r'C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\pre_jan6.csv')
-    pre_Jan6 = pre_Jan6[pre_Jan6['hate_core'] == True]
-    pre_Jan6['Day'] = pd.to_datetime(pre_Jan6['Day'])
-    pre_Jan6 = pre_Jan6[(pre_Jan6['Day'] >= start_date) & (pre_Jan6['Day'] <= end_date)]
+    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\Jan6.csv")
+    Jan6 = Jan6[Jan6['hate_core'] == True]
+    Jan6['Day'] = pd.to_datetime(Jan6['Day'])
+    Jan6 = Jan6[(Jan6['Day'] >= start_date) & (Jan6['Day'] <= end_date)]
 
 
-    df = pre_Jan6[['Source','Target']]
+    df = Jan6[['Source','Target']]
     df = df[df['Source'] != df['Target']]
     unique_pairs = df.groupby(['Source', 'Target']).size().reset_index(name='Weights')
     got_net = Network( notebook=True,cdn_resources="remote", height="500px", width="100%",  bgcolor="black",  font_color="red",)
