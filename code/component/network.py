@@ -6,9 +6,13 @@ import streamlit as st
 
 
 
-def got_func(physics):
+def got_func(physics, start_date, end_date):
     pre_Jan6 = pd.read_csv(r'C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\pre_jan6.csv')
     pre_Jan6 = pre_Jan6[pre_Jan6['hate_core'] == True]
+    pre_Jan6['Day'] = pd.to_datetime(pre_Jan6['Day'])
+    pre_Jan6 = pre_Jan6[(pre_Jan6['Day'] >= start_date) & (pre_Jan6['Day'] <= end_date)]
+
+
     df = pre_Jan6[['Source','Target']]
     df = df[df['Source'] != df['Target']]
     unique_pairs = df.groupby(['Source', 'Target']).size().reset_index(name='Weights')
