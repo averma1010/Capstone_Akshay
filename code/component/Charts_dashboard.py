@@ -18,12 +18,15 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from pandas.plotting import register_matplotlib_converters
 from scipy.ndimage.filters import gaussian_filter1d
 from matplotlib.dates import DateFormatter, DayLocator
+import streamlit as st
 
 
 
 def edge_count_chart(start_date, end_date):
     # Converting to Datetime format
     Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\Jan6.csv")
+    Jan6['Day'] = pd.to_datetime(Jan6['Day'])
+
     Jan6 = Jan6[(Jan6['Day'] >= start_date) & (Jan6['Day'] <= end_date)]
 
     # Group by 'Day' and count the number of rows for each day
@@ -32,20 +35,22 @@ def edge_count_chart(start_date, end_date):
     # Calculate the increase relative to the first day
     relative_increase_Jan6 = ((daily_counts_Jan6 - daily_counts_Jan6.iloc[0])/(daily_counts_Jan6.iloc[0]))*100.00
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(relative_increase_Jan6.index, relative_increase_Jan6.values, marker='o', linestyle='-', alpha=0.7, markersize=6)
-    plt.title('Increase in Hate Links Relative to Jan 1, 2021')
-    plt.xlabel('Day')
-    plt.ylabel('Increase in Number of Hate Links (%)')
-    plt.xticks(rotation=45)
-    plt.gca().set_yticklabels(['{:.0f}%'.format(x) for x in plt.gca().get_yticks()])  # Add '%' symbol to y-axis labels
-    plt.tight_layout()
-    plt.grid(False)  # Removing gridlines
-    plt.show()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(relative_increase_Jan6.index, relative_increase_Jan6.values, marker='o', linestyle='-', alpha=0.7, markersize=6)
+    ax.set_title('Increase in Hate Links Relative to Jan 1, 2021')
+    ax.set_xlabel('Day')
+    ax.set_ylabel('Increase in Number of Hate Links (%)')
+    ax.tick_params(axis='x', rotation=45)
+    ax.set_yticklabels(['{:.0f}%'.format(x) for x in ax.get_yticks()])  # Add '%' symbol to y-axis labels
+    ax.grid(False)  # Removing gridlines
+
+    # Display the plot in Streamlit
+    st.pyplot(fig)
 
 
 def network_comparison(start_date1, end_date1, start_date2, end_date2):
     Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\Jan6.csv")
+    Jan6['Day'] = pd.to_datetime(Jan6['Day'])
 
     pre_Jan6 = Jan6[(Jan6['Day'] >= start_date1) & (Jan6['Day'] <= end_date1)]
     post_Jan6 = Jan6[(Jan6['Day'] >= start_date2) & (Jan6['Day'] <= end_date2)]
@@ -85,5 +90,4 @@ def network_comparison(start_date1, end_date1, start_date2, end_date2):
 
     df = pd.DataFrame(data)
 
-    # Display the DataFrame
-    print(df)
+    st.write(df)
