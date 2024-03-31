@@ -53,7 +53,7 @@ class EdgeCountAnalyzer:
     def edge_count_chart(self, start_date, end_date):
         index_values, chart_values = self.calculate_relative_increase(start_date, end_date)
 
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(10, 3))
         ax.plot(index_values, chart_values, marker='o', linestyle='-', alpha=0.7, markersize=6)
         ax.set_title(f'Increase in Hate type relative to {start_date}')        
         ax.set_xlabel('Day')
@@ -104,9 +104,9 @@ class Network_comparison:
         data = {
             'Property': ['Density', 'Number of Cliques', 'Max Clique Size', 'Number of Communities',
                         'Size of Largest Community', 'Clustering Coefficient', 'Assortativity'],
-            f'{start_date1} to {end_date1}': [pre_density, len(pre_cliques), pre_max_clique_size, pre_num_communities,
+            f'Pre-Event': [pre_density, len(pre_cliques), pre_max_clique_size, pre_num_communities,
                         pre_largest_community, pre_clustering_coefficient, pre_assortativity],
-            f'{start_date2} to {end_date2}': [post_density, len(post_cliques), post_max_clique_size, post_num_communities,
+            f'Pos-Event': [post_density, len(post_cliques), post_max_clique_size, post_num_communities,
                         post_largest_community, post_clustering_coefficient, post_assortativity]
         }
 
@@ -117,8 +117,9 @@ class Network_comparison:
         data = self.network_comparison_metrics(start_date1, end_date1, start_date2, end_date2)
 
         df = pd.DataFrame(data)
+        df.set_index('Property', inplace=True)
 
-        st.write(df)
+        st.write(df, index=False)
 
 
 class hate_line_plot:
@@ -142,13 +143,15 @@ class hate_line_plot:
         increase.reset_index(inplace=True)
 
         # Plotting
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(10, 3))
         for col in boolean_columns:
             ax.plot(increase['Day'], increase[col], label=col)
 
         ax.set_title(f'Increase in Hate type relative to {start_date}')
         ax.set_xlabel('Day')
         ax.set_ylabel('Increase')
+        ax.tick_params(axis='x', rotation=45)
+
         ax.legend()
         ax.grid(True)
         st.pyplot(fig)

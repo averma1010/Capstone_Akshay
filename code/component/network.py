@@ -6,7 +6,7 @@ import streamlit as st
 
 
 
-def pre_event(physics, start_date, end_date):
+def pre_event(start_date, end_date):
     Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\Jan6.csv") ## Debt
     Jan6 = Jan6[Jan6['hate_core'] == True]
     Jan6['Day'] = pd.to_datetime(Jan6['Day'])
@@ -38,16 +38,17 @@ def pre_event(physics, start_date, end_date):
         got_net.add_node(src, src, title=src)
         got_net.add_node(dst, dst, title=dst)
         got_net.add_edge(src, dst, value=w)
+    
 
     
     neighbor_map = got_net.get_adj_list()
-
-    if physics:
-        got_net.show_buttons(filter_=['physics'])
     got_net.show("preevent.html")
+'''    if physics:
+        got_net.show_buttons(filter_=['physics'])
+    '''
 
 
-def post_event(physics, start_date, end_date):
+def post_event( start_date, end_date):
     Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\Jan6.csv") ## Debt
     Jan6 = Jan6[Jan6['hate_core'] == True]
     Jan6['Day'] = pd.to_datetime(Jan6['Day'])
@@ -80,10 +81,11 @@ def post_event(physics, start_date, end_date):
 
     
     neighbor_map = got_net.get_adj_list()
-
-    if physics:
-        got_net.show_buttons(filter_=['physics'])
     got_net.show("postevent.html")
+
+    '''if physics:
+        got_net.show_buttons(filter_=['physics'])'''
+    
 
  
   
