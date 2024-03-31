@@ -7,7 +7,6 @@ import network
 import Charts_dashboard
 import numpy as np
 from datetime import datetime, timedelta
-#import RAG_Insights
 
 
 
@@ -52,17 +51,21 @@ with c_left:
     components.html(source_code, height = 1200,width=750)
     
 
-
+c = st.container()
 with c_right:    
     
-
-
-    Charts_dashboard.edge_count_chart(start_date, end_date_1)
-
-
-    Charts_dashboard.network_comparison(start_date, end_date, start_date_1, end_date_1)
-
     
-#RAG_Insights.rag_openai()
     
+    analyzer = Charts_dashboard.EdgeCountAnalyzer()
+    analyzer.edge_count_chart(start_date, end_date_1)
+
+
+    Charts_dashboard.Network_comparison().network_comparison_df(start_date, end_date, start_date_1, end_date_1)
+
+    if st.button("Generate AI Insight"):
+        import RAG_Insights
+        data = Charts_dashboard.Network_comparison().network_comparison_metrics(start_date, end_date, start_date_1, end_date_1)
+        RAG_Insights.rag_openai(data)
+    
+
     
