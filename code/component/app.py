@@ -67,5 +67,6 @@ with c_right:
         data = Charts_dashboard.Network_comparison().network_comparison_metrics(start_date, end_date, start_date_1, end_date_1)
         RAG_Insights.rag_openai(data)
     
-
     
+    Charts_dashboard.hate_line_plot().hate_type_relative_increase(start_date, end_date_1)
+    Charts_dashboard.corr_plot().corr_plot(start_date, end_date_1)
