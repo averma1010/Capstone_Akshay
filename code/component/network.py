@@ -7,7 +7,7 @@ import streamlit as st
 
 
 def pre_event(start_date, end_date):
-    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\Jan6.csv") ## Debt
+    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\df.csv") ## Debt
     Jan6 = Jan6[Jan6['hate_core'] == True]
     Jan6['Day'] = pd.to_datetime(Jan6['Day'])
     Jan6 = Jan6[(Jan6['Day'] >= start_date) & (Jan6['Day'] <= end_date)]
@@ -49,7 +49,7 @@ def pre_event(start_date, end_date):
 
 
 def post_event( start_date, end_date):
-    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\Jan6.csv") ## Debt
+    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\df.csv") ## Debt
     Jan6 = Jan6[Jan6['hate_core'] == True]
     Jan6['Day'] = pd.to_datetime(Jan6['Day'])
     Jan6 = Jan6[(Jan6['Day'] >= start_date) & (Jan6['Day'] <= end_date)]
@@ -89,9 +89,9 @@ def post_event( start_date, end_date):
 
  
   
-def network_vis(physics, start_date_1, end_date_1, start_date_2, end_date_2):
+def network_vis( physics, start_date_1, end_date_1, start_date_2, end_date_2):
 
-    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\Jan6.csv") ## Debt
+    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\df.csv") ## Debt
     Jan6 = Jan6[Jan6['hate_core'] == True]
     Jan6['Day'] = pd.to_datetime(Jan6['Day'])
     pre_event = Jan6[(Jan6['Day'] >= start_date_1) & (Jan6['Day'] <= end_date_1)]
@@ -109,7 +109,7 @@ def network_vis(physics, start_date_1, end_date_1, start_date_2, end_date_2):
     unique_pairs_post_event = df_post_event.groupby(['Source', 'Target']).size().reset_index(name='Weights')
     unique_pairs_post_event = unique_pairs_post_event[unique_pairs_post_event['Weights'] > 1]
 
-    pre_net = Network( notebook=True,cdn_resources="remote", height="500px", width="100%",  bgcolor="black",  font_color="red",)
+    pre_net = Network( notebook=True,cdn_resources="remote", height="500px", width="100%",  bgcolor="black",  font_color="red", directed= True)
 
     # set the physics layout of the network
     pre_net.repulsion()
@@ -133,7 +133,7 @@ def network_vis(physics, start_date_1, end_date_1, start_date_2, end_date_2):
 
     
 ######################################################################################################################################################################
-    post_net = Network( notebook=True,cdn_resources="remote", height="500px", width="100%",  bgcolor="black",  font_color="red",)
+    post_net = Network( notebook=True,cdn_resources="remote", height="500px", width="100%",  bgcolor="white",  font_color="red", directed= True)
     post_net.repulsion()
 
     got_data = unique_pairs_post_event
@@ -153,10 +153,12 @@ def network_vis(physics, start_date_1, end_date_1, start_date_2, end_date_2):
 
     
     neighbor_map = post_net.get_adj_list()
-    if physics:
-        pre_net.show_buttons(filter_=['physics'])
-        post_net.show_buttons(filter_=['physics'])
 
+    if physics:
+        pre_net.force_atlas_2based( spring_strength=0.50)
+        post_net.force_atlas_2based( spring_strength=0.50)
+
+    
 
 
     pre_net.show("preevent.html")
