@@ -25,8 +25,9 @@ def load_data():
     """
     Load data from CSV file and perform necessary preprocessing.
     """
-    file_path = r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\Jan6.csv"
+    file_path = r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\df.csv"
     data = pd.read_csv(file_path)
+    
     data['Day'] = pd.to_datetime(data['Day'])
     return data
 
@@ -52,7 +53,7 @@ class EdgeCountAnalyzer:
 
     def edge_count_chart(self, start_date, end_date):
         index_values, chart_values = self.calculate_relative_increase(start_date, end_date)
-
+        
         fig, ax = plt.subplots(figsize=(10, 3))
         ax.plot(index_values, chart_values, marker='o', linestyle='-', alpha=0.7, markersize=6)
         ax.set_title(f'Increase in Hate type relative to {start_date}')        
@@ -104,22 +105,27 @@ class Network_comparison:
         data = {
             'Property': ['Density', 'Number of Cliques', 'Max Clique Size', 'Number of Communities',
                         'Size of Largest Community', 'Clustering Coefficient', 'Assortativity'],
-            f'Pre-Event': [pre_density, len(pre_cliques), pre_max_clique_size, pre_num_communities,
+            f'{start_date1} to {end_date1}': [pre_density, len(pre_cliques), pre_max_clique_size, pre_num_communities,
                         pre_largest_community, pre_clustering_coefficient, pre_assortativity],
-            f'Pos-Event': [post_density, len(post_cliques), post_max_clique_size, post_num_communities,
+            f'{start_date2} to {end_date2}': [post_density, len(post_cliques), post_max_clique_size, post_num_communities,
                         post_largest_community, post_clustering_coefficient, post_assortativity]
         }
+        df = pd.DataFrame(data)
+        markdown_file = os.path.join(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\Data", 'network_comparison_metrics.md')
+        with open(markdown_file, 'w') as f:
+            f.write(df.to_markdown(index=False))
 
         return data
         
 
     def network_comparison_df(self,start_date1, end_date1, start_date2, end_date2):
         data = self.network_comparison_metrics(start_date1, end_date1, start_date2, end_date2)
-
         df = pd.DataFrame(data)
+        df = df.rename(columns={f'{start_date1} to {end_date1}': 'pre_event', f'{start_date2} to {end_date2}': 'post_event'})
+
         df.set_index('Property', inplace=True)
 
-        st.write(df, index=False)
+        st.write(df)
 
 
 class hate_line_plot:
@@ -129,41 +135,40 @@ class hate_line_plot:
     
     def hate_type_relative_increase(self, start_date, end_date):
         Jan6 = self.data[(self.data['Day'] >= start_date) & (self.data['Day'] <= end_date)]
-
+        
         boolean_columns = [ 'race_prediction', 'giso_prediction', 'immigration_prediction']
-        boolean_df = Jan6[['Day'] + boolean_columns]
+        fig, ax = plt.subplots(figsize=(10, 3))
+        for column in boolean_columns:
+            Jan6[column].fillna(False, inplace=True)
+            true_counts = Jan6[Jan6[column]].groupby('Day').size()
+            # Assuming 'day' is the column containing the day information
+            first_day_count = true_counts.iloc[0]  # Count of True values on the first day
+            percentage_change = ((true_counts - first_day_count) / first_day_count) * 100
 
-        # Assuming 'day' is the column containing the day information
-        first_day = boolean_df['Day'].iloc[0]
-
-        # Calculate the increase in true values relative to the first day for each boolean column
-        increase = boolean_df.groupby('Day').sum() - boolean_df[boolean_df['Day'] == first_day].sum()
-
-        # Reset index to make 'day' a column again
-        increase.reset_index(inplace=True)
+            ax.plot(percentage_change.index, percentage_change.values, label=column, linewidth=2)
 
         # Plotting
-        fig, ax = plt.subplots(figsize=(10, 3))
-        for col in boolean_columns:
-            ax.plot(increase['Day'], increase[col], label=col)
-
+        
+        
+            
         ax.set_title(f'Increase in Hate type relative to {start_date}')
         ax.set_xlabel('Day')
-        ax.set_ylabel('Increase')
+        ax.set_ylabel('Relative Increase (%)')  # Label updated to reflect percentage increase
         ax.tick_params(axis='x', rotation=45)
 
         ax.legend()
         ax.grid(True)
         st.pyplot(fig)
 
+
         
 class corr_plot:
     def __init__(self) -> None:
         self.data = load_data()
 
-    def corr_plot(self, start_date, end_date):
-        Jan6 = self.data[(self.data['Day'] >= start_date) & (self.data['Day'] <= end_date)]
-
+    def corr_dataframe(self, start_date, end_date):
+        Jan6 = self.data[(self.data['Day'] >= start_date) & (self.data['Day'] <= end_date)].dropna( )
+        
         prediction_columns = ['religion_prediction', 'race_prediction', 'gender_prediction',
                       'giso_prediction', 'immigration_prediction', 'ein_prediction',
                       'antisemitism_prediction']
@@ -199,6 +204,13 @@ class corr_plot:
 
         # Create a DataFrame from the correlation values with columns as the original column names
         correlation_df = pd.DataFrame({'Column1': columns1, 'Column2': columns2, 'Correlation': correlation_values})
+        markdown_file = os.path.join(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\Data", 'SNS_and_Hate_Type.md')
+        with open(markdown_file, 'w') as f:
+            f.write(correlation_df.to_markdown(index=False))
+        return correlation_df
+    
+    def correlation_plot(self, start_date, end_date):
+        correlation_df = self.corr_dataframe(start_date, end_date)
 
         # Pivot the DataFrame to create a correlation matrix
         correlation_matrix = correlation_df.pivot('Column1', 'Column2', 'Correlation')
