@@ -9,6 +9,7 @@ import streamlit as st
 def pre_event(start_date, end_date):
     Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\df.csv") ## Debt
     Jan6 = Jan6[Jan6['hate_core'] == True]
+
     Jan6['Day'] = pd.to_datetime(Jan6['Day'])
     Jan6 = Jan6[(Jan6['Day'] >= start_date) & (Jan6['Day'] <= end_date)]
 
@@ -93,6 +94,7 @@ def network_vis( physics, start_date_1, end_date_1, start_date_2, end_date_2):
 
     Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\df.csv") ## Debt
     Jan6 = Jan6[Jan6['hate_core'] == True]
+    Jan6 = Jan6[(Jan6['SNS Source'] == 'TG') |(Jan6['SNS Target'] == 'TG') ]
     Jan6['Day'] = pd.to_datetime(Jan6['Day'])
     pre_event = Jan6[(Jan6['Day'] >= start_date_1) & (Jan6['Day'] <= end_date_1)]
     post_event = Jan6[(Jan6['Day'] >= start_date_2) & (Jan6['Day'] <= end_date_2)]
@@ -109,7 +111,7 @@ def network_vis( physics, start_date_1, end_date_1, start_date_2, end_date_2):
     unique_pairs_post_event = df_post_event.groupby(['Source', 'Target']).size().reset_index(name='Weights')
     unique_pairs_post_event = unique_pairs_post_event[unique_pairs_post_event['Weights'] > 1]
 
-    pre_net = Network( notebook=True,cdn_resources="remote", height="500px", width="100%",  bgcolor="black",  font_color="red", directed= True)
+    pre_net = Network( notebook=True,cdn_resources="remote", height="500px", width="100%",  bgcolor="white",  font_color="red", directed= True)
 
     # set the physics layout of the network
     pre_net.repulsion()
