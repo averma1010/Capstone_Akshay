@@ -39,6 +39,7 @@ with c3:
                                         value=(datetime(2021, 1, 6), datetime(2021, 1, 10)),
                                         format="YYYY-MM-DD", key=slider2_key)
     
+    
     network.network_vis(physics_checkbox,start_date, end_date, start_date_1, end_date_1)
     
     Charts_dashboard.Network_comparison().network_comparison_df( start_date, end_date, start_date_1, end_date_1)
@@ -79,10 +80,10 @@ with c5:
 c6,c7 = st.columns([1,1])
 
 
-with c6:
-    if st.button("Generate AI Insight"):
-            data = Charts_dashboard.Network_comparison().network_comparison_metrics(start_date, end_date, start_date_1, end_date_1)
-            RAG_Insights.rag_openai(data)
+
+if st.button("Generate AI Insight"):
+        data = Charts_dashboard.Network_comparison().network_comparison_metrics(start_date, end_date, start_date_1, end_date_1)
+        RAG_Insights.rag_openai(data)
         
 
 with c7:         
