@@ -19,6 +19,8 @@ from pandas.plotting import register_matplotlib_converters
 from scipy.ndimage.filters import gaussian_filter1d
 from matplotlib.dates import DateFormatter, DayLocator
 import streamlit as st
+import plotly.graph_objects as go
+
 
 
 def load_data():
@@ -53,6 +55,24 @@ class EdgeCountAnalyzer:
 
     def edge_count_chart(self, start_date, end_date):
         index_values, chart_values = self.calculate_relative_increase(start_date, end_date)
+
+        # Create a Plotly figure
+        fig = go.Figure()
+
+        # Add trace for the line chart
+        fig.add_trace(go.Scatter(x=index_values, y=chart_values, mode='lines+markers'))
+
+        # Update layout with title and axis labels
+        fig.update_layout(title=f"Increase in Hate Type Relative to {start_date}",
+                          xaxis_title="Day",
+                          yaxis_title="Increase in Number of Hate Links (%)",
+                          height=500, 
+                          width=800)
+
+        # Display the Plotly figure
+        st.plotly_chart(fig)
+    """def edge_count_chart(self, start_date, end_date):
+        index_values, chart_values = self.calculate_relative_increase(start_date, end_date)
         
         fig, ax = plt.subplots(figsize=(10, 3))
         ax.plot(index_values, chart_values, marker='o', linestyle='-', alpha=0.7, markersize=6)
@@ -64,7 +84,7 @@ class EdgeCountAnalyzer:
         ax.grid(False)  # Removing gridlines
 
         # Display the plot in Streamlit
-        st.pyplot(fig)
+        st.pyplot(fig)"""
 
 class Network_comparison:
     def __init__(self):
@@ -136,6 +156,47 @@ class hate_line_plot:
     def hate_type_relative_increase(self, start_date, end_date):
         Jan6 = self.data[(self.data['Day'] >= start_date) & (self.data['Day'] <= end_date)]
         
+        boolean_columns = ['race_prediction', 'giso_prediction', 'immigration_prediction']
+
+        # Create a Plotly figure
+        fig = go.Figure()
+
+        for column in boolean_columns:
+            Jan6[column].fillna(False, inplace=True)
+            true_counts = Jan6[Jan6[column]].groupby('Day').size()
+            first_day_count = true_counts.iloc[0]  # Count of True values on the first day
+            percentage_change = ((true_counts - first_day_count) / first_day_count) * 100
+
+            # Add trace for each column
+            fig.add_trace(go.Scatter(x=percentage_change.index, y=percentage_change.values, mode='lines+markers', name=column))
+
+        # Update layout with title, axis labels, height, and width
+        fig.update_layout(title=f"Increase in Hate Type Relative to {start_date}",
+                          xaxis_title="Day",
+                          yaxis_title="Relative Increase (%)",
+                          height=500,  # Set the height to match plt.subplots(figsize=(10, 3))
+                          width=800,
+                          legend=dict(
+                              x=1,
+                              y=1,
+                              xanchor='right',
+                              yanchor='top',
+                              traceorder="normal",
+                              font=dict(
+                                  family="sans-serif",
+                                  size=12,
+                                  color="black"
+                              ),
+                              bgcolor="LightSteelBlue",
+                              bordercolor="Black",
+                              borderwidth=2
+                          ))  # Set the width to match plt.subplots(figsize=(10, 3))
+
+        # Display the Plotly figure
+        st.plotly_chart(fig)
+    """def hate_type_relative_increase(self, start_date, end_date):
+        Jan6 = self.data[(self.data['Day'] >= start_date) & (self.data['Day'] <= end_date)]
+        
         boolean_columns = [ 'race_prediction', 'giso_prediction', 'immigration_prediction']
         fig, ax = plt.subplots(figsize=(10, 3))
         for column in boolean_columns:
@@ -159,7 +220,7 @@ class hate_line_plot:
         ax.legend()
         ax.grid(True)
         st.pyplot(fig)
-
+"""
 
         
 class corr_plot:
