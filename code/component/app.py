@@ -9,7 +9,7 @@ import numpy as np
 from datetime import datetime, timedelta
 import RAG_Insights
 
-
+import pandas as pd
 
 
 st.set_page_config(layout="wide")
@@ -22,22 +22,17 @@ c1, c2, c3 = st.columns([2,2,1])
 with c3:    
     st.markdown('#')
     st.markdown('#')
-    physics_checkbox = st.checkbox('Add Physics(Under Construction)')
-
+    physics_checkbox = st.checkbox('Add Physics')
+    cc1, cc2 = st.columns([1,1])
     st.empty()
-    start_date, end_date = st.slider("Select Date Range for Pre Event", 
-                                     min_value=datetime(2020, 11, 1),
-                                     max_value=datetime(2021, 1, 10),
-                                     value=(datetime(2021, 1, 1), datetime(2021, 1, 5)),
-                                     format="YYYY-MM-DD")
-    
+    with cc1:
+        start_date = pd.Timestamp(st.date_input("Select Start Date for Pre Event", datetime(2021, 1, 1)))
+        start_date_1 = pd.Timestamp(st.date_input("Select Start Date for Pre Event", datetime(2021, 1, 6)))
+    with cc2:
+        end_date = pd.Timestamp(st.date_input("Select End Date for Pre Event", datetime(2021, 1, 5)))
+        end_date_1 = pd.Timestamp(st.date_input("Select End Date for Pre Event", datetime(2021, 1, 10)))
+        
     slider2_key = "slider2"
-    
-    start_date_1, end_date_1 = st.slider("Select Date Range for Post Event", 
-                                        min_value=datetime(2020, 11, 1),
-                                        max_value=datetime(2021, 1, 10),
-                                        value=(datetime(2021, 1, 6), datetime(2021, 1, 10)),
-                                        format="YYYY-MM-DD", key=slider2_key)
     
     
     network.network_vis(physics_checkbox,start_date, end_date, start_date_1, end_date_1)
@@ -79,14 +74,15 @@ with c5:
 
 c6,c7 = st.columns([1,1])
 
-
-
-if st.button("Generate AI Insight"):
+with c6:
+    if st.button("Generate AI Insight"):
         data = Charts_dashboard.Network_comparison().network_comparison_metrics(start_date, end_date, start_date_1, end_date_1)
         RAG_Insights.rag_openai(data)
+
+
         
 
 with c7:         
     Charts_dashboard.corr_plot().correlation_plot(start_date, end_date_1)
-
+    
 
