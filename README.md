@@ -1,7 +1,8 @@
 # Capstone_Akshay
  
-'``
-.
+
+
+```.
 ├── code
 │   ├── component
 │   │   ├── Network.py
@@ -18,4 +19,3 @@
     ├── Latex
     │   └── Fig
     └── Word
-```
