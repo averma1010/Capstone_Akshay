@@ -7,7 +7,7 @@ import openai
 
 def rag_openai(data):
 
-    openai.api_key = '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'
+    openai.api_key = ''
 
     key1 = list(data.keys())[1]
     key2 = list(data.keys())[2]
