@@ -90,12 +90,14 @@ def post_event( start_date, end_date):
 
  
   
-def network_vis( physics, start_date_1, end_date_1, start_date_2, end_date_2):
+def network_vis( sns, physics, start_date_1, end_date_1, start_date_2, end_date_2):
 
-    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\df.csv") ## Debt
+    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\Component\Data_Network\df.csv") ## Debt
     Jan6 = Jan6[Jan6['hate_core'] == True]
-    Jan6 = Jan6[(Jan6['SNS Source'] == 'TG') |(Jan6['SNS Target'] == 'TG') ]
+    if sns != 'all':
+        Jan6 = Jan6[(Jan6['SNS Source'] == sns) |(Jan6['SNS Target'] == sns) ]
     Jan6['Day'] = pd.to_datetime(Jan6['Day'])
+    
     pre_event = Jan6[(Jan6['Day'] >= start_date_1) & (Jan6['Day'] <= end_date_1)]
     post_event = Jan6[(Jan6['Day'] >= start_date_2) & (Jan6['Day'] <= end_date_2)]
 
@@ -157,8 +159,8 @@ def network_vis( physics, start_date_1, end_date_1, start_date_2, end_date_2):
     neighbor_map = post_net.get_adj_list()
 
     if physics:
-        pre_net.force_atlas_2based( spring_strength=0.50)
-        post_net.force_atlas_2based( spring_strength=0.50)
+        pre_net.force_atlas_2based( central_gravity=0.05,spring_strength=0.50)
+        post_net.force_atlas_2based( central_gravity=0.05,spring_strength=0.50)
 
     
 

@@ -27,7 +27,7 @@ def load_data():
     """
     Load data from CSV file and perform necessary preprocessing.
     """
-    file_path = r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\df.csv"
+    file_path = r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\Component\Data_Network\df.csv"
     data = pd.read_csv(file_path)
     
     data['Day'] = pd.to_datetime(data['Day'])
@@ -277,10 +277,10 @@ class corr_plot:
         correlation_matrix = correlation_df.pivot('Column1', 'Column2', 'Correlation')
 
         # Remove the 'Instagram' column and row from the correlation matrix
-        try:
+        """try:
             correlation_matrix = correlation_matrix.drop('Instagram', axis=1)
         except:
-            pass
+            pass"""
 
         # Plot the heatmap
         fig, ax = plt.subplots(figsize=(10, 6))

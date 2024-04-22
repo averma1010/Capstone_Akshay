@@ -13,12 +13,14 @@
 
 ```.
 ├── code
-│   ├── component
+│   ├── Dashboard and Jupyter Notebook
+│   │   └── Data
 │   │   ├── Network.py
 │   │   ├── Chart_Dashboard.py
 │   │   └── Chat_with_Dashboard.py
 │   └── main_code
 │       └── Dashboard.py
+├── Data
 ├── demo
 │   └── fig
 ├── full_report
@@ -47,4 +49,5 @@ To use the dashboard, follow these steps:
    pip install -r requirements.txt
 
 4. **Command to run Dashboard**
+    ```bash
     streamlit run dashboard.py

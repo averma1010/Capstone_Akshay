@@ -1,0 +1,452 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 500px;
+                 background-color: white;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 500px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "red"}, "id": "4Chan__1", "label": "4Chan__1", "shape": "dot", "title": "4Chan__1"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__1", "label": "Bitchute__1", "shape": "dot", "title": "Bitchute__1"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__104", "label": "Bitchute__104", "shape": "dot", "title": "Bitchute__104"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__108", "label": "Bitchute__108", "shape": "dot", "title": "Bitchute__108"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__111", "label": "Bitchute__111", "shape": "dot", "title": "Bitchute__111"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__124", "label": "Bitchute__124", "shape": "dot", "title": "Bitchute__124"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__125", "label": "Bitchute__125", "shape": "dot", "title": "Bitchute__125"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__128", "label": "Bitchute__128", "shape": "dot", "title": "Bitchute__128"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__14", "label": "Bitchute__14", "shape": "dot", "title": "Bitchute__14"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__143", "label": "Bitchute__143", "shape": "dot", "title": "Bitchute__143"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__146", "label": "Bitchute__146", "shape": "dot", "title": "Bitchute__146"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__154", "label": "Bitchute__154", "shape": "dot", "title": "Bitchute__154"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__16", "label": "Bitchute__16", "shape": "dot", "title": "Bitchute__16"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__164", "label": "Bitchute__164", "shape": "dot", "title": "Bitchute__164"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__171", "label": "Bitchute__171", "shape": "dot", "title": "Bitchute__171"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__174", "label": "Bitchute__174", "shape": "dot", "title": "Bitchute__174"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__19", "label": "Bitchute__19", "shape": "dot", "title": "Bitchute__19"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__20", "label": "Bitchute__20", "shape": "dot", "title": "Bitchute__20"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__25", "label": "Bitchute__25", "shape": "dot", "title": "Bitchute__25"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__3", "label": "Bitchute__3", "shape": "dot", "title": "Bitchute__3"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__30", "label": "Bitchute__30", "shape": "dot", "title": "Bitchute__30"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__32", "label": "Bitchute__32", "shape": "dot", "title": "Bitchute__32"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__33", "label": "Bitchute__33", "shape": "dot", "title": "Bitchute__33"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__36", "label": "Bitchute__36", "shape": "dot", "title": "Bitchute__36"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__37", "label": "Bitchute__37", "shape": "dot", "title": "Bitchute__37"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__38", "label": "Bitchute__38", "shape": "dot", "title": "Bitchute__38"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__40", "label": "Bitchute__40", "shape": "dot", "title": "Bitchute__40"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__43", "label": "Bitchute__43", "shape": "dot", "title": "Bitchute__43"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__44", "label": "Bitchute__44", "shape": "dot", "title": "Bitchute__44"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__48", "label": "Bitchute__48", "shape": "dot", "title": "Bitchute__48"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__50", "label": "Bitchute__50", "shape": "dot", "title": "Bitchute__50"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__56", "label": "Bitchute__56", "shape": "dot", "title": "Bitchute__56"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__6", "label": "Bitchute__6", "shape": "dot", "title": "Bitchute__6"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__60", "label": "Bitchute__60", "shape": "dot", "title": "Bitchute__60"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__65", "label": "Bitchute__65", "shape": "dot", "title": "Bitchute__65"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__68", "label": "Bitchute__68", "shape": "dot", "title": "Bitchute__68"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__7", "label": "Bitchute__7", "shape": "dot", "title": "Bitchute__7"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__79", "label": "Bitchute__79", "shape": "dot", "title": "Bitchute__79"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__82", "label": "Bitchute__82", "shape": "dot", "title": "Bitchute__82"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__84", "label": "Bitchute__84", "shape": "dot", "title": "Bitchute__84"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__89", "label": "Bitchute__89", "shape": "dot", "title": "Bitchute__89"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__296", "label": "Gab__296", "shape": "dot", "title": "Gab__296"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__55", "label": "Gab__55", "shape": "dot", "title": "Gab__55"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__134", "label": "Rumble__134", "shape": "dot", "title": "Rumble__134"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__22", "label": "Rumble__22", "shape": "dot", "title": "Rumble__22"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__23", "label": "Rumble__23", "shape": "dot", "title": "Rumble__23"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__38", "label": "Rumble__38", "shape": "dot", "title": "Rumble__38"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__46", "label": "Rumble__46", "shape": "dot", "title": "Rumble__46"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__6", "label": "Rumble__6", "shape": "dot", "title": "Rumble__6"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__142", "label": "TG__142", "shape": "dot", "title": "TG__142"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__332", "label": "TG__332", "shape": "dot", "title": "TG__332"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__333", "label": "TG__333", "shape": "dot", "title": "TG__333"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__339", "label": "TG__339", "shape": "dot", "title": "TG__339"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__1", "label": "YouTube__1", "shape": "dot", "title": "YouTube__1"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__10", "label": "YouTube__10", "shape": "dot", "title": "YouTube__10"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__12", "label": "YouTube__12", "shape": "dot", "title": "YouTube__12"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__13", "label": "YouTube__13", "shape": "dot", "title": "YouTube__13"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__14", "label": "YouTube__14", "shape": "dot", "title": "YouTube__14"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__16", "label": "YouTube__16", "shape": "dot", "title": "YouTube__16"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__17", "label": "YouTube__17", "shape": "dot", "title": "YouTube__17"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__18", "label": "YouTube__18", "shape": "dot", "title": "YouTube__18"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__19", "label": "YouTube__19", "shape": "dot", "title": "YouTube__19"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__21", "label": "YouTube__21", "shape": "dot", "title": "YouTube__21"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__26", "label": "YouTube__26", "shape": "dot", "title": "YouTube__26"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__27", "label": "YouTube__27", "shape": "dot", "title": "YouTube__27"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__28", "label": "YouTube__28", "shape": "dot", "title": "YouTube__28"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__4", "label": "YouTube__4", "shape": "dot", "title": "YouTube__4"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__45", "label": "YouTube__45", "shape": "dot", "title": "YouTube__45"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__47", "label": "YouTube__47", "shape": "dot", "title": "YouTube__47"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__56", "label": "YouTube__56", "shape": "dot", "title": "YouTube__56"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__6", "label": "YouTube__6", "shape": "dot", "title": "YouTube__6"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__61", "label": "YouTube__61", "shape": "dot", "title": "YouTube__61"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__9", "label": "YouTube__9", "shape": "dot", "title": "YouTube__9"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__23", "label": "Bitchute__23", "shape": "dot", "title": "Bitchute__23"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__155", "label": "Bitchute__155", "shape": "dot", "title": "Bitchute__155"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__152", "label": "Bitchute__152", "shape": "dot", "title": "Bitchute__152"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__157", "label": "Bitchute__157", "shape": "dot", "title": "Bitchute__157"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__2", "label": "Bitchute__2", "shape": "dot", "title": "Bitchute__2"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__26", "label": "Bitchute__26", "shape": "dot", "title": "Bitchute__26"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__22", "label": "Bitchute__22", "shape": "dot", "title": "Bitchute__22"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__141", "label": "Bitchute__141", "shape": "dot", "title": "Bitchute__141"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__15", "label": "Bitchute__15", "shape": "dot", "title": "Bitchute__15"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__5", "label": "Bitchute__5", "shape": "dot", "title": "Bitchute__5"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__47", "label": "Bitchute__47", "shape": "dot", "title": "Bitchute__47"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__35", "label": "Bitchute__35", "shape": "dot", "title": "Bitchute__35"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__34", "label": "Bitchute__34", "shape": "dot", "title": "Bitchute__34"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "FB__170", "label": "FB__170", "shape": "dot", "title": "FB__170"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "FB__172", "label": "FB__172", "shape": "dot", "title": "FB__172"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "FB__179", "label": "FB__179", "shape": "dot", "title": "FB__179"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__10", "label": "Gab__10", "shape": "dot", "title": "Gab__10"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__10", "label": "Bitchute__10", "shape": "dot", "title": "Bitchute__10"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__48", "label": "YouTube__48", "shape": "dot", "title": "YouTube__48"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__105", "label": "Gab__105", "shape": "dot", "title": "Gab__105"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__143", "label": "Gab__143", "shape": "dot", "title": "Gab__143"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__5", "label": "YouTube__5", "shape": "dot", "title": "YouTube__5"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__178", "label": "Gab__178", "shape": "dot", "title": "Gab__178"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__179", "label": "Gab__179", "shape": "dot", "title": "Gab__179"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__185", "label": "Gab__185", "shape": "dot", "title": "Gab__185"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__20", "label": "Gab__20", "shape": "dot", "title": "Gab__20"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__208", "label": "Gab__208", "shape": "dot", "title": "Gab__208"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__21", "label": "Gab__21", "shape": "dot", "title": "Gab__21"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__23", "label": "Gab__23", "shape": "dot", "title": "Gab__23"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__255", "label": "Gab__255", "shape": "dot", "title": "Gab__255"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__269", "label": "Gab__269", "shape": "dot", "title": "Gab__269"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__280", "label": "Gab__280", "shape": "dot", "title": "Gab__280"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__284", "label": "Gab__284", "shape": "dot", "title": "Gab__284"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__29", "label": "Bitchute__29", "shape": "dot", "title": "Bitchute__29"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__290", "label": "Gab__290", "shape": "dot", "title": "Gab__290"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__299", "label": "Gab__299", "shape": "dot", "title": "Gab__299"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__30", "label": "Gab__30", "shape": "dot", "title": "Gab__30"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__335", "label": "Gab__335", "shape": "dot", "title": "Gab__335"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__144", "label": "Bitchute__144", "shape": "dot", "title": "Bitchute__144"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__35", "label": "Gab__35", "shape": "dot", "title": "Gab__35"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__11", "label": "Bitchute__11", "shape": "dot", "title": "Bitchute__11"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__4", "label": "Gab__4", "shape": "dot", "title": "Gab__4"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__439", "label": "Gab__439", "shape": "dot", "title": "Gab__439"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__45", "label": "Gab__45", "shape": "dot", "title": "Gab__45"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__48", "label": "Gab__48", "shape": "dot", "title": "Gab__48"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__93", "label": "Gab__93", "shape": "dot", "title": "Gab__93"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Gab__95", "label": "Gab__95", "shape": "dot", "title": "Gab__95"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__72", "label": "Bitchute__72", "shape": "dot", "title": "Bitchute__72"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__10", "label": "Rumble__10", "shape": "dot", "title": "Rumble__10"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__16", "label": "Rumble__16", "shape": "dot", "title": "Rumble__16"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__27", "label": "Rumble__27", "shape": "dot", "title": "Rumble__27"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__28", "label": "Rumble__28", "shape": "dot", "title": "Rumble__28"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__39", "label": "Rumble__39", "shape": "dot", "title": "Rumble__39"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__4", "label": "Rumble__4", "shape": "dot", "title": "Rumble__4"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__212", "label": "TG__212", "shape": "dot", "title": "TG__212"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__48", "label": "Rumble__48", "shape": "dot", "title": "Rumble__48"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__65", "label": "Rumble__65", "shape": "dot", "title": "Rumble__65"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Rumble__7", "label": "Rumble__7", "shape": "dot", "title": "Rumble__7"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__122", "label": "TG__122", "shape": "dot", "title": "TG__122"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__218", "label": "TG__218", "shape": "dot", "title": "TG__218"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__11", "label": "YouTube__11", "shape": "dot", "title": "YouTube__11"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__123", "label": "TG__123", "shape": "dot", "title": "TG__123"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__125", "label": "TG__125", "shape": "dot", "title": "TG__125"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__139", "label": "TG__139", "shape": "dot", "title": "TG__139"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__3", "label": "YouTube__3", "shape": "dot", "title": "YouTube__3"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__140", "label": "TG__140", "shape": "dot", "title": "TG__140"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__146", "label": "TG__146", "shape": "dot", "title": "TG__146"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__147", "label": "TG__147", "shape": "dot", "title": "TG__147"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__150", "label": "TG__150", "shape": "dot", "title": "TG__150"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__152", "label": "TG__152", "shape": "dot", "title": "TG__152"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__273", "label": "TG__273", "shape": "dot", "title": "TG__273"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__154", "label": "TG__154", "shape": "dot", "title": "TG__154"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__156", "label": "TG__156", "shape": "dot", "title": "TG__156"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__67", "label": "TG__67", "shape": "dot", "title": "TG__67"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__158", "label": "TG__158", "shape": "dot", "title": "TG__158"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__159", "label": "TG__159", "shape": "dot", "title": "TG__159"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__170", "label": "TG__170", "shape": "dot", "title": "TG__170"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__199", "label": "TG__199", "shape": "dot", "title": "TG__199"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__208", "label": "TG__208", "shape": "dot", "title": "TG__208"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__215", "label": "TG__215", "shape": "dot", "title": "TG__215"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__222", "label": "TG__222", "shape": "dot", "title": "TG__222"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__266", "label": "TG__266", "shape": "dot", "title": "TG__266"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__275", "label": "TG__275", "shape": "dot", "title": "TG__275"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__28", "label": "Bitchute__28", "shape": "dot", "title": "Bitchute__28"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__280", "label": "TG__280", "shape": "dot", "title": "TG__280"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__324", "label": "TG__324", "shape": "dot", "title": "TG__324"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__44", "label": "TG__44", "shape": "dot", "title": "TG__44"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__452", "label": "TG__452", "shape": "dot", "title": "TG__452"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__49", "label": "TG__49", "shape": "dot", "title": "TG__49"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__50", "label": "TG__50", "shape": "dot", "title": "TG__50"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__128", "label": "TG__128", "shape": "dot", "title": "TG__128"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__45", "label": "TG__45", "shape": "dot", "title": "TG__45"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__52", "label": "TG__52", "shape": "dot", "title": "TG__52"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__55", "label": "TG__55", "shape": "dot", "title": "TG__55"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__104", "label": "TG__104", "shape": "dot", "title": "TG__104"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__155", "label": "TG__155", "shape": "dot", "title": "TG__155"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__57", "label": "TG__57", "shape": "dot", "title": "TG__57"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__68", "label": "TG__68", "shape": "dot", "title": "TG__68"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__69", "label": "TG__69", "shape": "dot", "title": "TG__69"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__72", "label": "TG__72", "shape": "dot", "title": "TG__72"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__73", "label": "TG__73", "shape": "dot", "title": "TG__73"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "TG__74", "label": "TG__74", "shape": "dot", "title": "TG__74"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__1", "label": "Twitter__1", "shape": "dot", "title": "Twitter__1"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__10", "label": "Twitter__10", "shape": "dot", "title": "Twitter__10"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__9", "label": "Twitter__9", "shape": "dot", "title": "Twitter__9"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__12", "label": "Twitter__12", "shape": "dot", "title": "Twitter__12"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__13", "label": "Twitter__13", "shape": "dot", "title": "Twitter__13"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__18", "label": "Twitter__18", "shape": "dot", "title": "Twitter__18"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__15", "label": "Twitter__15", "shape": "dot", "title": "Twitter__15"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__20", "label": "Twitter__20", "shape": "dot", "title": "Twitter__20"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__21", "label": "Twitter__21", "shape": "dot", "title": "Twitter__21"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "YouTube__60", "label": "YouTube__60", "shape": "dot", "title": "YouTube__60"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__32", "label": "Twitter__32", "shape": "dot", "title": "Twitter__32"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__6", "label": "Twitter__6", "shape": "dot", "title": "Twitter__6"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__36", "label": "Twitter__36", "shape": "dot", "title": "Twitter__36"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__37", "label": "Twitter__37", "shape": "dot", "title": "Twitter__37"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__38", "label": "Twitter__38", "shape": "dot", "title": "Twitter__38"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__39", "label": "Twitter__39", "shape": "dot", "title": "Twitter__39"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__4", "label": "Twitter__4", "shape": "dot", "title": "Twitter__4"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__47", "label": "Twitter__47", "shape": "dot", "title": "Twitter__47"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__48", "label": "Twitter__48", "shape": "dot", "title": "Twitter__48"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__5", "label": "Twitter__5", "shape": "dot", "title": "Twitter__5"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__52", "label": "Twitter__52", "shape": "dot", "title": "Twitter__52"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Twitter__8", "label": "Twitter__8", "shape": "dot", "title": "Twitter__8"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "VK__105", "label": "VK__105", "shape": "dot", "title": "VK__105"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "VK__145", "label": "VK__145", "shape": "dot", "title": "VK__145"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "VK__212", "label": "VK__212", "shape": "dot", "title": "VK__212"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "VK__64", "label": "VK__64", "shape": "dot", "title": "VK__64"}, {"color": "#97c2fc", "font": {"color": "red"}, "id": "Bitchute__87", "label": "Bitchute__87", "shape": "dot", "title": "Bitchute__87"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "4Chan__1", "to": "4Chan__1", "value": 463}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__1", "value": 62}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__104", "value": 3}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__108", "value": 8}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__111", "value": 17}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__124", "value": 5}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__125", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__128", "value": 28}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__14", "value": 3}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__143", "value": 5}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__146", "value": 3}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__154", "value": 3}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__16", "value": 3}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__164", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__171", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__174", "value": 6}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__19", "value": 5}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__20", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__25", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__3", "value": 15}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__30", "value": 7}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__32", "value": 34}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__33", "value": 5}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__36", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__37", "value": 6}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__38", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__40", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__43", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__44", "value": 5}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__48", "value": 10}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__50", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__56", "value": 3}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__6", "value": 18}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__60", "value": 4}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__65", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__68", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__7", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__79", "value": 4}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__82", "value": 3}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__84", "value": 6}, {"arrows": "to", "from": "4Chan__1", "to": "Bitchute__89", "value": 3}, {"arrows": "to", "from": "4Chan__1", "to": "Gab__296", "value": 52}, {"arrows": "to", "from": "4Chan__1", "to": "Gab__55", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Rumble__134", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "Rumble__22", "value": 7}, {"arrows": "to", "from": "4Chan__1", "to": "Rumble__23", "value": 24}, {"arrows": "to", "from": "4Chan__1", "to": "Rumble__38", "value": 6}, {"arrows": "to", "from": "4Chan__1", "to": "Rumble__46", "value": 7}, {"arrows": "to", "from": "4Chan__1", "to": "Rumble__6", "value": 25}, {"arrows": "to", "from": "4Chan__1", "to": "TG__142", "value": 3}, {"arrows": "to", "from": "4Chan__1", "to": "TG__332", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "TG__333", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "TG__339", "value": 5}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__1", "value": 16}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__10", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__12", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__13", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__14", "value": 21}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__16", "value": 25}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__17", "value": 6}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__18", "value": 37}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__19", "value": 38}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__21", "value": 112}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__26", "value": 19}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__27", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__28", "value": 3}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__4", "value": 14}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__45", "value": 12}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__47", "value": 5}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__56", "value": 2}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__6", "value": 23}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__61", "value": 11}, {"arrows": "to", "from": "4Chan__1", "to": "YouTube__9", "value": 34}, {"arrows": "to", "from": "Bitchute__124", "to": "Bitchute__23", "value": 2}, {"arrows": "to", "from": "Bitchute__128", "to": "Bitchute__128", "value": 2}, {"arrows": "to", "from": "Bitchute__14", "to": "Bitchute__155", "value": 2}, {"arrows": "to", "from": "Bitchute__152", "to": "Bitchute__152", "value": 4}, {"arrows": "to", "from": "Bitchute__152", "to": "Bitchute__154", "value": 2}, {"arrows": "to", "from": "Bitchute__152", "to": "Bitchute__32", "value": 5}, {"arrows": "to", "from": "Bitchute__152", "to": "Bitchute__43", "value": 2}, {"arrows": "to", "from": "Bitchute__152", "to": "Bitchute__7", "value": 4}, {"arrows": "to", "from": "Bitchute__155", "to": "Bitchute__155", "value": 2}, {"arrows": "to", "from": "Bitchute__157", "to": "Bitchute__7", "value": 3}, {"arrows": "to", "from": "Bitchute__2", "to": "Bitchute__26", "value": 2}, {"arrows": "to", "from": "Bitchute__20", "to": "Bitchute__22", "value": 3}, {"arrows": "to", "from": "Bitchute__20", "to": "Bitchute__32", "value": 2}, {"arrows": "to", "from": "Bitchute__20", "to": "Bitchute__44", "value": 2}, {"arrows": "to", "from": "Bitchute__20", "to": "Bitchute__7", "value": 4}, {"arrows": "to", "from": "Bitchute__26", "to": "Bitchute__141", "value": 2}, {"arrows": "to", "from": "Bitchute__26", "to": "Bitchute__32", "value": 2}, {"arrows": "to", "from": "Bitchute__26", "to": "Bitchute__6", "value": 17}, {"arrows": "to", "from": "Bitchute__44", "to": "Bitchute__15", "value": 2}, {"arrows": "to", "from": "Bitchute__44", "to": "Bitchute__2", "value": 3}, {"arrows": "to", "from": "Bitchute__44", "to": "Bitchute__32", "value": 2}, {"arrows": "to", "from": "Bitchute__44", "to": "Bitchute__43", "value": 3}, {"arrows": "to", "from": "Bitchute__44", "to": "Bitchute__44", "value": 4}, {"arrows": "to", "from": "Bitchute__44", "to": "Bitchute__5", "value": 2}, {"arrows": "to", "from": "Bitchute__44", "to": "Bitchute__7", "value": 7}, {"arrows": "to", "from": "Bitchute__47", "to": "Bitchute__35", "value": 2}, {"arrows": "to", "from": "Bitchute__5", "to": "Bitchute__5", "value": 2}, {"arrows": "to", "from": "Bitchute__50", "to": "Bitchute__16", "value": 3}, {"arrows": "to", "from": "Bitchute__50", "to": "Bitchute__2", "value": 3}, {"arrows": "to", "from": "Bitchute__50", "to": "Bitchute__30", "value": 2}, {"arrows": "to", "from": "Bitchute__50", "to": "Bitchute__32", "value": 3}, {"arrows": "to", "from": "Bitchute__50", "to": "Bitchute__34", "value": 5}, {"arrows": "to", "from": "Bitchute__50", "to": "Bitchute__7", "value": 4}, {"arrows": "to", "from": "Bitchute__6", "to": "Bitchute__23", "value": 9}, {"arrows": "to", "from": "Bitchute__7", "to": "Bitchute__7", "value": 12}, {"arrows": "to", "from": "FB__170", "to": "FB__170", "value": 5}, {"arrows": "to", "from": "FB__172", "to": "FB__179", "value": 3}, {"arrows": "to", "from": "Gab__10", "to": "Bitchute__10", "value": 3}, {"arrows": "to", "from": "Gab__10", "to": "Bitchute__32", "value": 5}, {"arrows": "to", "from": "Gab__10", "to": "Bitchute__7", "value": 4}, {"arrows": "to", "from": "Gab__10", "to": "YouTube__48", "value": 2}, {"arrows": "to", "from": "Gab__105", "to": "Bitchute__6", "value": 2}, {"arrows": "to", "from": "Gab__105", "to": "Gab__105", "value": 2}, {"arrows": "to", "from": "Gab__143", "to": "YouTube__5", "value": 3}, {"arrows": "to", "from": "Gab__178", "to": "YouTube__5", "value": 3}, {"arrows": "to", "from": "Gab__179", "to": "YouTube__5", "value": 3}, {"arrows": "to", "from": "Gab__185", "to": "YouTube__5", "value": 4}, {"arrows": "to", "from": "Gab__20", "to": "YouTube__5", "value": 3}, {"arrows": "to", "from": "Gab__208", "to": "YouTube__18", "value": 3}, {"arrows": "to", "from": "Gab__208", "to": "YouTube__5", "value": 3}, {"arrows": "to", "from": "Gab__21", "to": "YouTube__5", "value": 5}, {"arrows": "to", "from": "Gab__23", "to": "Rumble__46", "value": 2}, {"arrows": "to", "from": "Gab__255", "to": "YouTube__5", "value": 4}, {"arrows": "to", "from": "Gab__269", "to": "YouTube__5", "value": 4}, {"arrows": "to", "from": "Gab__280", "to": "YouTube__5", "value": 4}, {"arrows": "to", "from": "Gab__284", "to": "Bitchute__29", "value": 2}, {"arrows": "to", "from": "Gab__290", "to": "YouTube__5", "value": 4}, {"arrows": "to", "from": "Gab__299", "to": "YouTube__5", "value": 6}, {"arrows": "to", "from": "Gab__30", "to": "Rumble__46", "value": 2}, {"arrows": "to", "from": "Gab__335", "to": "Bitchute__1", "value": 2}, {"arrows": "to", "from": "Gab__335", "to": "Bitchute__144", "value": 2}, {"arrows": "to", "from": "Gab__335", "to": "Bitchute__26", "value": 3}, {"arrows": "to", "from": "Gab__335", "to": "Gab__55", "value": 5}, {"arrows": "to", "from": "Gab__335", "to": "Rumble__46", "value": 2}, {"arrows": "to", "from": "Gab__35", "to": "Bitchute__11", "value": 2}, {"arrows": "to", "from": "Gab__35", "to": "Bitchute__14", "value": 3}, {"arrows": "to", "from": "Gab__35", "to": "YouTube__5", "value": 4}, {"arrows": "to", "from": "Gab__4", "to": "YouTube__5", "value": 2}, {"arrows": "to", "from": "Gab__439", "to": "YouTube__1", "value": 2}, {"arrows": "to", "from": "Gab__439", "to": "YouTube__18", "value": 2}, {"arrows": "to", "from": "Gab__45", "to": "YouTube__5", "value": 4}, {"arrows": "to", "from": "Gab__48", "to": "YouTube__5", "value": 2}, {"arrows": "to", "from": "Gab__55", "to": "4Chan__1", "value": 3}, {"arrows": "to", "from": "Gab__55", "to": "Bitchute__50", "value": 2}, {"arrows": "to", "from": "Gab__55", "to": "Gab__55", "value": 5}, {"arrows": "to", "from": "Gab__93", "to": "Bitchute__32", "value": 4}, {"arrows": "to", "from": "Gab__95", "to": "Bitchute__72", "value": 2}, {"arrows": "to", "from": "Rumble__10", "to": "Rumble__10", "value": 10}, {"arrows": "to", "from": "Rumble__16", "to": "Gab__296", "value": 2}, {"arrows": "to", "from": "Rumble__27", "to": "Rumble__27", "value": 3}, {"arrows": "to", "from": "Rumble__28", "to": "Rumble__28", "value": 2}, {"arrows": "to", "from": "Rumble__39", "to": "Rumble__39", "value": 4}, {"arrows": "to", "from": "Rumble__4", "to": "Rumble__4", "value": 2}, {"arrows": "to", "from": "Rumble__4", "to": "TG__212", "value": 2}, {"arrows": "to", "from": "Rumble__48", "to": "Bitchute__2", "value": 4}, {"arrows": "to", "from": "Rumble__65", "to": "Rumble__65", "value": 6}, {"arrows": "to", "from": "Rumble__7", "to": "Gab__296", "value": 2}, {"arrows": "to", "from": "Rumble__7", "to": "Rumble__7", "value": 6}, {"arrows": "to", "from": "TG__122", "to": "TG__122", "value": 10}, {"arrows": "to", "from": "TG__122", "to": "TG__218", "value": 23}, {"arrows": "to", "from": "TG__122", "to": "YouTube__10", "value": 2}, {"arrows": "to", "from": "TG__122", "to": "YouTube__11", "value": 4}, {"arrows": "to", "from": "TG__123", "to": "TG__218", "value": 2}, {"arrows": "to", "from": "TG__125", "to": "TG__218", "value": 2}, {"arrows": "to", "from": "TG__125", "to": "YouTube__11", "value": 3}, {"arrows": "to", "from": "TG__139", "to": "YouTube__3", "value": 5}, {"arrows": "to", "from": "TG__140", "to": "YouTube__11", "value": 4}, {"arrows": "to", "from": "TG__142", "to": "Bitchute__47", "value": 3}, {"arrows": "to", "from": "TG__146", "to": "TG__218", "value": 2}, {"arrows": "to", "from": "TG__146", "to": "YouTube__11", "value": 2}, {"arrows": "to", "from": "TG__147", "to": "YouTube__11", "value": 2}, {"arrows": "to", "from": "TG__150", "to": "TG__218", "value": 2}, {"arrows": "to", "from": "TG__150", "to": "YouTube__11", "value": 3}, {"arrows": "to", "from": "TG__152", "to": "TG__152", "value": 3}, {"arrows": "to", "from": "TG__152", "to": "TG__273", "value": 2}, {"arrows": "to", "from": "TG__154", "to": "YouTube__11", "value": 2}, {"arrows": "to", "from": "TG__156", "to": "Gab__55", "value": 3}, {"arrows": "to", "from": "TG__156", "to": "TG__67", "value": 2}, {"arrows": "to", "from": "TG__158", "to": "YouTube__11", "value": 7}, {"arrows": "to", "from": "TG__158", "to": "YouTube__3", "value": 5}, {"arrows": "to", "from": "TG__159", "to": "4Chan__1", "value": 2}, {"arrows": "to", "from": "TG__159", "to": "Gab__55", "value": 6}, {"arrows": "to", "from": "TG__159", "to": "Rumble__46", "value": 2}, {"arrows": "to", "from": "TG__170", "to": "YouTube__17", "value": 2}, {"arrows": "to", "from": "TG__199", "to": "TG__122", "value": 5}, {"arrows": "to", "from": "TG__199", "to": "TG__218", "value": 17}, {"arrows": "to", "from": "TG__199", "to": "YouTube__10", "value": 2}, {"arrows": "to", "from": "TG__199", "to": "YouTube__11", "value": 6}, {"arrows": "to", "from": "TG__208", "to": "TG__218", "value": 2}, {"arrows": "to", "from": "TG__208", "to": "YouTube__11", "value": 5}, {"arrows": "to", "from": "TG__208", "to": "YouTube__3", "value": 5}, {"arrows": "to", "from": "TG__212", "to": "Rumble__4", "value": 4}, {"arrows": "to", "from": "TG__215", "to": "TG__218", "value": 2}, {"arrows": "to", "from": "TG__215", "to": "YouTube__11", "value": 3}, {"arrows": "to", "from": "TG__218", "to": "TG__122", "value": 6}, {"arrows": "to", "from": "TG__218", "to": "TG__218", "value": 21}, {"arrows": "to", "from": "TG__218", "to": "YouTube__10", "value": 2}, {"arrows": "to", "from": "TG__218", "to": "YouTube__11", "value": 9}, {"arrows": "to", "from": "TG__222", "to": "TG__122", "value": 6}, {"arrows": "to", "from": "TG__222", "to": "TG__218", "value": 21}, {"arrows": "to", "from": "TG__222", "to": "YouTube__10", "value": 2}, {"arrows": "to", "from": "TG__222", "to": "YouTube__11", "value": 12}, {"arrows": "to", "from": "TG__266", "to": "TG__152", "value": 4}, {"arrows": "to", "from": "TG__266", "to": "TG__170", "value": 2}, {"arrows": "to", "from": "TG__275", "to": "4Chan__1", "value": 11}, {"arrows": "to", "from": "TG__275", "to": "Bitchute__28", "value": 2}, {"arrows": "to", "from": "TG__275", "to": "Gab__296", "value": 6}, {"arrows": "to", "from": "TG__275", "to": "Gab__335", "value": 2}, {"arrows": "to", "from": "TG__275", "to": "Gab__55", "value": 2}, {"arrows": "to", "from": "TG__275", "to": "YouTube__18", "value": 7}, {"arrows": "to", "from": "TG__280", "to": "4Chan__1", "value": 3}, {"arrows": "to", "from": "TG__324", "to": "YouTube__18", "value": 2}, {"arrows": "to", "from": "TG__44", "to": "TG__152", "value": 2}, {"arrows": "to", "from": "TG__44", "to": "TG__170", "value": 4}, {"arrows": "to", "from": "TG__452", "to": "TG__452", "value": 2}, {"arrows": "to", "from": "TG__49", "to": "YouTube__14", "value": 2}, {"arrows": "to", "from": "TG__50", "to": "TG__128", "value": 3}, {"arrows": "to", "from": "TG__50", "to": "TG__170", "value": 3}, {"arrows": "to", "from": "TG__50", "to": "TG__45", "value": 5}, {"arrows": "to", "from": "TG__52", "to": "TG__122", "value": 5}, {"arrows": "to", "from": "TG__52", "to": "TG__218", "value": 17}, {"arrows": "to", "from": "TG__52", "to": "YouTube__10", "value": 2}, {"arrows": "to", "from": "TG__52", "to": "YouTube__11", "value": 4}, {"arrows": "to", "from": "TG__55", "to": "TG__104", "value": 111}, {"arrows": "to", "from": "TG__55", "to": "TG__155", "value": 34}, {"arrows": "to", "from": "TG__57", "to": "YouTube__11", "value": 2}, {"arrows": "to", "from": "TG__67", "to": "TG__67", "value": 2}, {"arrows": "to", "from": "TG__68", "to": "TG__218", "value": 2}, {"arrows": "to", "from": "TG__68", "to": "YouTube__11", "value": 5}, {"arrows": "to", "from": "TG__68", "to": "YouTube__3", "value": 5}, {"arrows": "to", "from": "TG__69", "to": "TG__170", "value": 2}, {"arrows": "to", "from": "TG__72", "to": "TG__218", "value": 2}, {"arrows": "to", "from": "TG__72", "to": "YouTube__11", "value": 6}, {"arrows": "to", "from": "TG__72", "to": "YouTube__3", "value": 5}, {"arrows": "to", "from": "TG__73", "to": "TG__122", "value": 5}, {"arrows": "to", "from": "TG__73", "to": "TG__218", "value": 17}, {"arrows": "to", "from": "TG__73", "to": "YouTube__10", "value": 4}, {"arrows": "to", "from": "TG__73", "to": "YouTube__11", "value": 10}, {"arrows": "to", "from": "TG__73", "to": "YouTube__3", "value": 5}, {"arrows": "to", "from": "TG__74", "to": "TG__122", "value": 5}, {"arrows": "to", "from": "TG__74", "to": "TG__218", "value": 18}, {"arrows": "to", "from": "TG__74", "to": "YouTube__10", "value": 2}, {"arrows": "to", "from": "TG__74", "to": "YouTube__11", "value": 7}, {"arrows": "to", "from": "TG__74", "to": "YouTube__3", "value": 5}, {"arrows": "to", "from": "Twitter__1", "to": "YouTube__17", "value": 2}, {"arrows": "to", "from": "Twitter__10", "to": "Twitter__10", "value": 19}, {"arrows": "to", "from": "Twitter__10", "to": "Twitter__9", "value": 2}, {"arrows": "to", "from": "Twitter__12", "to": "Twitter__12", "value": 2}, {"arrows": "to", "from": "Twitter__13", "to": "Twitter__13", "value": 39}, {"arrows": "to", "from": "Twitter__13", "to": "Twitter__18", "value": 2}, {"arrows": "to", "from": "Twitter__15", "to": "Twitter__15", "value": 11}, {"arrows": "to", "from": "Twitter__18", "to": "Twitter__18", "value": 69}, {"arrows": "to", "from": "Twitter__20", "to": "Twitter__18", "value": 5}, {"arrows": "to", "from": "Twitter__21", "to": "YouTube__60", "value": 2}, {"arrows": "to", "from": "Twitter__32", "to": "Twitter__32", "value": 4}, {"arrows": "to", "from": "Twitter__32", "to": "Twitter__6", "value": 2}, {"arrows": "to", "from": "Twitter__32", "to": "Twitter__9", "value": 4}, {"arrows": "to", "from": "Twitter__36", "to": "Twitter__36", "value": 33}, {"arrows": "to", "from": "Twitter__37", "to": "Twitter__37", "value": 19}, {"arrows": "to", "from": "Twitter__38", "to": "Twitter__38", "value": 2}, {"arrows": "to", "from": "Twitter__39", "to": "Twitter__39", "value": 2}, {"arrows": "to", "from": "Twitter__39", "to": "Twitter__6", "value": 10}, {"arrows": "to", "from": "Twitter__4", "to": "Twitter__4", "value": 9}, {"arrows": "to", "from": "Twitter__47", "to": "YouTube__60", "value": 3}, {"arrows": "to", "from": "Twitter__48", "to": "Twitter__48", "value": 2}, {"arrows": "to", "from": "Twitter__5", "to": "Twitter__5", "value": 40}, {"arrows": "to", "from": "Twitter__52", "to": "4Chan__1", "value": 62}, {"arrows": "to", "from": "Twitter__6", "to": "Twitter__18", "value": 4}, {"arrows": "to", "from": "Twitter__6", "to": "Twitter__39", "value": 2}, {"arrows": "to", "from": "Twitter__6", "to": "Twitter__6", "value": 28}, {"arrows": "to", "from": "Twitter__8", "to": "Twitter__8", "value": 11}, {"arrows": "to", "from": "Twitter__9", "to": "Twitter__9", "value": 38}, {"arrows": "to", "from": "VK__105", "to": "VK__105", "value": 34}, {"arrows": "to", "from": "VK__145", "to": "VK__145", "value": 6}, {"arrows": "to", "from": "VK__212", "to": "VK__212", "value": 3}, {"arrows": "to", "from": "VK__64", "to": "VK__64", "value": 2}, {"arrows": "to", "from": "YouTube__10", "to": "YouTube__10", "value": 5}, {"arrows": "to", "from": "YouTube__19", "to": "Bitchute__87", "value": 5}, {"arrows": "to", "from": "YouTube__21", "to": "YouTube__21", "value": 3}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "repulsion": {
+            "centralGravity": 0.2,
+            "damping": 0.09,
+            "nodeDistance": 100,
+            "springConstant": 0.05,
+            "springLength": 200
+        },
+        "solver": "repulsion",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

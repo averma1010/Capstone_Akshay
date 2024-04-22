@@ -4,9 +4,10 @@ from llama_index.core import VectorStoreIndex, ServiceContext,SimpleDirectoryRea
 from llama_index.llms.openai  import OpenAI
 import openai
 
+
 def rag_openai(data):
 
-    openai.api_key = 'sk-'
+    openai.api_key = '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'
 
     key1 = list(data.keys())[1]
     key2 = list(data.keys())[2]
@@ -30,29 +31,18 @@ def rag_openai(data):
 
     index = load_data()
     if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
-        st.session_state.chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
+        st.session_state.chat_engine = index.as_query_engine(chat_mode="condense_question", verbose=True)
 
 
     
 
-        
-
     
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
-        st.session_state.messages.append({"role": "user", "content": prompt})
 
-    for message in st.session_state.messages: # Display the prior chat messages
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
+    with st.chat_message("assistant"):
+        with st.spinner("Thinking..."):
+            response = st.session_state.chat_engine.query(prompt)
+            st.write(response.response)
 
-    # If last message is not from assistant, generate a new response
-    if st.session_state.messages[-1]["role"] != "assistant":
-        with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
-                response = st.session_state.chat_engine.chat(prompt)
-                st.write(response.response)
-                message = {"role": "assistant", "content": response.response}
-                st.session_state.messages.append(message) # Add response to message history
+
 
 

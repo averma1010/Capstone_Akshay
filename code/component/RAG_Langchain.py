@@ -16,7 +16,7 @@ from langchain_community.document_loaders import DirectoryLoader
 
 
 
-os.environ["OPENAI_API_KEY"] = "sk-"
+os.environ["OPENAI_API_KEY"] = ""
 
 
 def get_vectorstore_from_url():
@@ -93,7 +93,7 @@ def get_conversational_rag_chain(retriever_chain):
         (
             "system",
             "You are an Analyst working on how the online hate network changes after pivotal real world event, especifically looking at the 2020 US presidential election  and Jan 6 capitol attack. "
-            "Answer the user's questions based. Give the most prominant insights and relate it to real world events. Keep your answers technical and based on facts – do not hallucinate features."
+            "Give answers in an authoritative but gentle tone. Give the most prominant insights and relate it to real world events. Keep your answers technical and based on facts – do not hallucinate features."
             " on the below context:\n\n{context}"
         ),
         MessagesPlaceholder(variable_name="chat_history"),

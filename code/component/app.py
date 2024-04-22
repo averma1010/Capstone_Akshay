@@ -8,6 +8,7 @@ import Charts_dashboard
 import numpy as np
 from datetime import datetime, timedelta
 import RAG_Insights
+from streamlit_date_picker import date_range_picker, PickerType, Unit, date_picker
 
 import pandas as pd
 
@@ -22,7 +23,15 @@ c1, c2, c3 = st.columns([2,2,1])
 with c3:    
     st.markdown('#')
     st.markdown('#')
-    physics_checkbox = st.checkbox('Add Physics')
+    ccc1, ccc2 = st.columns([1,1])
+    with ccc1:
+        physics_checkbox = st.checkbox('Add Physics')
+    with ccc2:
+        sns_names = ['all' , '4Chan', 'TG', 'Youtube', 'Gab', 'Twitter']
+
+        # Sidebar dropdown to select social networking site
+        selected_sns = st.selectbox("Select Social Networking Site", sns_names)
+
     cc1, cc2 = st.columns([1,1])
     st.empty()
     with cc1:
@@ -35,7 +44,7 @@ with c3:
     slider2_key = "slider2"
     
     
-    network.network_vis(physics_checkbox,start_date, end_date, start_date_1, end_date_1)
+    network.network_vis(selected_sns, physics_checkbox,start_date, end_date, start_date_1, end_date_1)
     
     Charts_dashboard.Network_comparison().network_comparison_df( start_date, end_date, start_date_1, end_date_1)
 
