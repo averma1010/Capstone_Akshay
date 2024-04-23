@@ -63,7 +63,7 @@ class EdgeCountAnalyzer:
         fig.add_trace(go.Scatter(x=index_values, y=chart_values, mode='lines+markers'))
 
         # Update layout with title and axis labels
-        fig.update_layout(title=f"Increase in Hate Type Relative to {start_date}",
+        fig.update_layout(title=f"Increase in Hate Links relative to {start_date}",
                           xaxis_title="Day",
                           yaxis_title="Increase in Number of Hate Links (%)",
                           height=500, 
