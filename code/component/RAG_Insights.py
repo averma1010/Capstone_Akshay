@@ -25,7 +25,7 @@ def rag_openai(data):
             docs = reader.load_data()
             # llm = OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="You are an expert o$
             # index = VectorStoreIndex.from_documents(docs)
-            service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo-0125", temperature=0.3, system_prompt="You are an Analyst. You are also an expert on the timeline of the 2020 presidential election and following events from Nov 1 2020 to Jan 10 2021, and on the hate speech propogated online because of it. You are also an expert on Network Science and Graph Theory. Assume that all questions are related to the timeline of the presidential election and Hate speech propogated online because of real world events and about difference in two networks. Keep your answers technical and based on facts – do not hallucinate features. "))
+            service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4-turbo-preview", temperature=0.3, system_prompt="You are an Analyst. You are also an expert on the timeline of the 2020 presidential election and following events from Nov 1 2020 to Jan 10 2021, and on the hate speech propogated online because of it. You are also an expert on Network Science and Graph Theory. Assume that all questions are related to the timeline of the presidential election and Hate speech propogated online because of real world events and about difference in two networks. Keep your answers technical and based on facts – do not hallucinate features. "))
             index = VectorStoreIndex    .from_documents(docs, service_context=service_context)
             return index
 
