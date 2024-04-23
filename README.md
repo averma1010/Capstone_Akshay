@@ -18,11 +18,8 @@
 │   │   ├── Network.py
 │   │   ├── Chart_Dashboard.py
 │   │   └── Chat_with_Dashboard.py
-│   └── main_code
-│       └── Dashboard.py
+│   |   └── app.py (Dashboard)
 ├── Data
-├── demo
-│   └── fig
 ├── full_report
 │   └── Word_Report
 ├── presentation
@@ -44,9 +41,7 @@ To use the dashboard, follow these steps:
 
 2. **Obtain API Key**: You'll need to obtain your own API key for accessing the necessary data. The dashboard relies on external APIs for data retrieval. Instructions for obtaining the API key can be found in the documentation of the respective APIs used in the project.
 
-3. **Install Dependencies**: Make sure you have Python installed on your system. Navigate to the project directory and install the required dependencies by running:
-   ```bash
-   pip install -r requirements.txt
+
 
 4. **Command to run Dashboard**
     ```bash
