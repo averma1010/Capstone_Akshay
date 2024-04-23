@@ -16,7 +16,7 @@ from langchain_community.document_loaders import DirectoryLoader
 
 
 
-os.environ["OPENAI_API_KEY"] = ""
+os.environ["OPENAI_API_KEY"] = "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"
 
 
 def get_vectorstore_from_url():
@@ -29,7 +29,7 @@ def get_vectorstore_from_url():
         url (str): The URL of the document.
 
     Returns:
-        Chroma: The vector store created from the document chunks.
+        Chroma: The vector sgptore created from the document chunks.
     """
     # Get text-in documents
     file_path = r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\Data"
@@ -58,7 +58,7 @@ def get_context_retriever_chain(vector_store):
     Returns:
         RetrievalChain: The context retriever chain.
     """
-    llm = ChatOpenAI()
+    llm = ChatOpenAI(model="gpt-4-turbo-preview")
     retriever = vector_store.as_retriever()
 
     prompt = ChatPromptTemplate.from_messages([
@@ -75,19 +75,8 @@ def get_context_retriever_chain(vector_store):
 
 
 def get_conversational_rag_chain(retriever_chain):
-    """Create a conversational RAG chain
-    using the given context retriever chain.
 
-    This function creates a conversational RAG chain
-    using a context retriever chain and a chat prompt template.
-
-    Args:
-        retriever_chain (RetrievalChain): The context retriever chain.
-
-    Returns:
-        RetrievalChain: The conversational RAG chain.
-    """
-    llm = ChatOpenAI()
+    llm = ChatOpenAI(model="gpt-4-turbo-preview")
 
     prompt = ChatPromptTemplate.from_messages([
         (
