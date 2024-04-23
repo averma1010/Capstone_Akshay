@@ -16,7 +16,7 @@ from langchain_community.document_loaders import DirectoryLoader
 
 
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = ""
 
 
 def get_vectorstore_from_url():
