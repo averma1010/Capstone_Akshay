@@ -32,7 +32,23 @@
 
 
 ## Abstract
-This study delves into the evolution of online hate networks following significant real-world events, such as the 2020 U.S. presidential election and the January 6 Capitol attack. By analyzing hate speech themes and network topology, the research uncovers shifts in online hate dynamics, emphasizing the role of platforms like Telegram in propagating extremist ideologies.
+ In the digital age, online hate networks thrive as platforms for spreading extremist ideologies and hate speech, posing a significant threat tosocietal cohesion. This study examines the impact of key real-world events, notably the 2020 U.S. presidential election and the January 6 Capitol attack on the evolution of online hate networks. Using data collected from hate
+ communities between November 1, 2020, and January 10, 2021, this research
+ analyzes shifts in hate speech themes and network topology. Following the
+ presidential election, an increase in hate speech targeting immigration, eth
+nicity, and antisemitism was observed. The January 6 Capitol attack further
+ intensified these trends. Central to this investigation is the examination of
+ two key aspects of online hate networks: the content they disseminate and
+ the underlying structure of their connections. By studying shifts in hate
+ themes and network topology, including changes in centrality and com
+munity structure, this study seeks to uncover the mechanisms driving the
+ evolution of online hate networks. The analysis reveals significant changes
+ in network cohesion post-attack, characterized by increased clustering and
+ assortativity. This research sheds light on the role of online platforms in
+ radicalization and mobilization efforts, emphasizing the need for proactive
+ measures to combat hate speech online. Despite its niche presence, Telegram
+ has become a key hub for propagating extremist ideologies and coordinating
+ malicious activities.
 
 ## Using the Dashboard
 
