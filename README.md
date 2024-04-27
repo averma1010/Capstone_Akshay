@@ -13,7 +13,7 @@
 
 ```.
 ├── code
-│   ├── Dashboard and Jupyter Notebook
+│   ├── component (Dashboard and Jupyter Notebook)
 │   │   ├──  Data (Data for Data_Analysis_Notebook)
 │   │   ├── Network.py
 │   │   ├── Chart_Dashboard.py
