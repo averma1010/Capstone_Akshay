@@ -13,13 +13,14 @@
 
 ```.
 ├── code
-│   ├── Dashboard and Jupyter Notebook
-│   │   └── Data
+│   ├── component (Dashboard and Jupyter Notebook)
+│   │   ├──  Data (Data for Data_Analysis_Notebook)
 │   │   ├── Network.py
 │   │   ├── Chart_Dashboard.py
-│   │   └── Chat_with_Dashboard.py
-│   |   └── app.py (Dashboard)
-├── Data
+│   │   ├──  Chat_with_Dashboard.py
+│   |   ├──  app.py (Dashboard)
+│   |   └──Data_Analysis_Notebook
+├── Data (Data for RAG)
 ├── full_report
 │   └── Word_Report
 ├── presentation
@@ -45,4 +46,4 @@ To use the dashboard, follow these steps:
 
 4. **Command to run Dashboard**
     ```bash
-    streamlit run dashboard.py
+    streamlit run app.py
