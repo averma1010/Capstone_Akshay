@@ -7,7 +7,7 @@ import openai
 
 def rag_openai(data):
 
-    openai.api_key = ''
+    openai.api_key = '' ## ENTER YOU OPENAI API KEY HERE
 
     key1 = list(data.keys())[1]
     key2 = list(data.keys())[2]
@@ -21,7 +21,7 @@ def rag_openai(data):
     @st.cache_resource(show_spinner=False)
     def load_data():
         with st.spinner(text="Loading the insights – hang tight! This should take 1-2 minutes."):
-            reader = SimpleDirectoryReader(input_dir=r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\Data", recursive=True)
+            reader = SimpleDirectoryReader(input_dir=r"Data", recursive=True)
             docs = reader.load_data()
             # llm = OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="You are an expert o$
             # index = VectorStoreIndex.from_documents(docs)

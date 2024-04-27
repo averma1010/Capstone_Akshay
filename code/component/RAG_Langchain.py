@@ -16,7 +16,7 @@ from langchain_community.document_loaders import DirectoryLoader
 
 
 
-os.environ["OPENAI_API_KEY"] = ""
+os.environ["OPENAI_API_KEY"] = "" ## ENTER YOU OPENAI API KEY HERE
 
 
 def get_vectorstore_from_url():
@@ -32,7 +32,7 @@ def get_vectorstore_from_url():
         Chroma: The vector sgptore created from the document chunks.
     """
     # Get text-in documents
-    file_path = r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\Data"
+    file_path = r"Data"
     loader = DirectoryLoader(file_path)
     document = loader.load()
 
