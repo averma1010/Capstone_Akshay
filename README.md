@@ -46,4 +46,4 @@ To use the dashboard, follow these steps:
 
 4. **Command to run Dashboard**
     ```bash
-    streamlit run dashboard.py
+    streamlit run app.py
