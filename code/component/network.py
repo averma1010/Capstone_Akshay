@@ -7,7 +7,7 @@ import streamlit as st
 
 
 def pre_event(start_date, end_date):
-    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\df.csv") ## Debt
+    Jan6 = pd.read_csv(r"./Data_Network/df.csv") ## Debt
     Jan6 = Jan6[Jan6['hate_core'] == True]
 
     Jan6['Day'] = pd.to_datetime(Jan6['Day'])
@@ -50,7 +50,7 @@ def pre_event(start_date, end_date):
 
 
 def post_event( start_date, end_date):
-    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\component\df.csv") ## Debt
+    Jan6 = pd.read_csv(r"./Data_Network/df.csv") ## Debt
     Jan6 = Jan6[Jan6['hate_core'] == True]
     Jan6['Day'] = pd.to_datetime(Jan6['Day'])
     Jan6 = Jan6[(Jan6['Day'] >= start_date) & (Jan6['Day'] <= end_date)]
@@ -91,8 +91,8 @@ def post_event( start_date, end_date):
  
   
 def network_vis( sns, physics, start_date_1, end_date_1, start_date_2, end_date_2):
-
-    Jan6 = pd.read_csv(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\Component\Data_Network\df.csv") ## Debt
+    relative_path = './componet/df.csv'
+    Jan6 = pd.read_csv(r"code\component\df.csv") ## Debt
     Jan6 = Jan6[Jan6['hate_core'] == True]
     if sns != 'all':
         Jan6 = Jan6[(Jan6['SNS Source'] == sns) |(Jan6['SNS Target'] == sns) ]

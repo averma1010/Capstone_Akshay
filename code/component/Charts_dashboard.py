@@ -27,7 +27,7 @@ def load_data():
     """
     Load data from CSV file and perform necessary preprocessing.
     """
-    file_path = r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\code\Component\Data_Network\df.csv"
+    file_path = r"code\component\df.csv"
     data = pd.read_csv(file_path)
     
     data['Day'] = pd.to_datetime(data['Day'])
@@ -131,7 +131,7 @@ class Network_comparison:
                         post_largest_community, post_clustering_coefficient, post_assortativity]
         }
         df = pd.DataFrame(data)
-        markdown_file = os.path.join(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\Data", 'network_comparison_metrics.md')
+        markdown_file = os.path.join(r"Data", 'network_comparison_metrics.md')
         with open(markdown_file, 'w') as f:
             f.write(df.to_markdown(index=False))
 
@@ -265,7 +265,7 @@ class corr_plot:
 
         # Create a DataFrame from the correlation values with columns as the original column names
         correlation_df = pd.DataFrame({'Column1': columns1, 'Column2': columns2, 'Correlation': correlation_values})
-        markdown_file = os.path.join(r"C:\Users\Akshay\OneDrive\Desktop\Capstone_Akshay\Data", 'SNS_and_Hate_Type.md')
+        markdown_file = os.path.join(r"Data", 'SNS_and_Hate_Type.md')
         with open(markdown_file, 'w') as f:
             f.write(correlation_df.to_markdown(index=False))
         return correlation_df
