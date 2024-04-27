@@ -14,12 +14,13 @@
 ```.
 ├── code
 │   ├── Dashboard and Jupyter Notebook
-│   │   └── Data
+│   │   ├──  Data (Data for Data_Analysis_Notebook)
 │   │   ├── Network.py
 │   │   ├── Chart_Dashboard.py
-│   │   └── Chat_with_Dashboard.py
-│   |   └── app.py (Dashboard)
-├── Data
+│   │   ├──  Chat_with_Dashboard.py
+│   |   ├──  app.py (Dashboard)
+│   |   └──Data_Analysis_Notebook
+├── Data (Data for RAG)
 ├── full_report
 │   └── Word_Report
 ├── presentation
