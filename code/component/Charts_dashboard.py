@@ -274,7 +274,7 @@ class corr_plot:
         correlation_df = self.corr_dataframe(start_date, end_date)
 
         # Pivot the DataFrame to create a correlation matrix
-        correlation_matrix = correlation_df.pivot('Column1', 'Column2', 'Correlation')
+        correlation_matrix = correlation_df.pivot(index='Column1', columns='Column2', values='Correlation')
 
         # Remove the 'Instagram' column and row from the correlation matrix
         """try:
