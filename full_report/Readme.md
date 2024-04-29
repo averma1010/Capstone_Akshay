@@ -1,5 +1,3 @@
-## Instruction for full report
+## Full report
 
-- This is the place you put your full report here.
-- We provided some sample report in different forms.
-- Use those templates for your project report and documentation.
+Full report is in the word report folder in word and pdf format
