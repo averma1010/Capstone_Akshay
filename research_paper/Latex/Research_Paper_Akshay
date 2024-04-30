@@ -1,4 +1,3 @@
-%%
 %% This is file `sample-acmtog.tex',
 %% generated with the docstrip utility.
 %%
@@ -59,7 +58,6 @@
 \usepackage{hyperref}
 \usepackage{subcaption}
 
-
 %%
 %% \BibTeX command to typeset BibTeX logo in the docs
 \AtBeginDocument{%
@@ -71,10 +69,6 @@
 %% values in them; it is your responsibility as an author to replace
 %% the commands and values with those provided to you when you
 %% complete the rights form.
-
-
-
-
 
 %%
 %% Submission ID.
@@ -112,7 +106,7 @@
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
-\title{How the US Presidential Elections and the Capitol Attack Shaped the Online Hate Landscape}
+\title{U.S. Election Hardens Hate Universe}
 
 %%
 %% The "author" command and its associated commands are used to define
@@ -145,248 +139,110 @@
 }
 
 \begin{abstract}  
-ABSTRACT: In the digital age, online hate networks thrive as platforms for spreading extremist ideologies and hate speech, posing a significant threat to societal cohesion. This study examines the impact of key real-world events, notably the 2020 U.S. presidential election and the January 6 Capitol attack, on the evolution of online hate networks. Using data collected from hate communities between November 1, 2020, and January 10, 2021, this research analyzes shifts in hate speech themes and network topology. Following the presidential election, an increase in hate speech targeting immigration, ethnicity, and antisemitism was observed. The January 6 Capitol attack further intensified these trends. Central to this investigation is the examination of two key aspects of online hate networks: the content they disseminate and the underlying structure of their connections. By studying shifts in hate themes and network topology, including changes in centrality and community structure, this study seeks to uncover the mechanisms driving the evolution of online hate networks. The analysis reveals significant changes in network cohesion post-attack, characterized by increased clustering and assortativity. This research sheds light on the role of online platforms in radicalization and mobilization efforts, emphasizing the need for proactive measures to combat hate speech online. Despite its niche presence, Telegram has become a key hub for propagating extremist ideologies and coordinating malicious activities.
+{\bf Local or national politics can trigger potentially dangerous hate in someone  \cite{schackmuth2018extremism, starbird_disinformations_2019,shahi_protecting_2023,obaidi2022great,noauthor_stress_nodate,johnson_hidden_2019,cynthia_miller-idriss_hate_2020,douek2022content}. But with a third of the world's population eligible to vote in elections in 2024 alone \cite{shahi_protecting_2023}, we lack understanding of how individual-level hate multiplies up to hate behavior at the collective global scale. Here we show, based on the most recent U.S. election, that offline events are associated with a rapid adaptation of the global online hate universe that hardens (strengthens) both its network-of-networks structure and the `flavors' of hate content that it collectively produces. Approximately 50 million potential voters in hate communities are drawn closer to each other and to the broad mainstream of approximately 2 billion others. It triggers new hate content at scale around immigration, ethnicity, and antisemitism that aligns with  conspiracy theories about Jewish-led replacement \cite{obaidi2022great} before blending in hate around gender identity/sexual orientation, and religion. Telegram acts as a key hardening agent -- yet is overlooked by U.S. Congressional hearings and new E.U. legislation \cite{euDSA}. Because the hate universe has remained robust since 2020, anti-hate messaging surrounding not only upcoming elections but also other events like the war in Gaza, should pivot to blending multiple hate ‘flavors’ \cite{lupu_offline_2023} while targeting previously untouched social media structures.}
 
 \end{abstract}
 
-%%
-%% By default, the full list of authors will be used in the page
-%% headers. Often, this list is too long, and will overlap
-%% other information printed in the page headers. This command allows
-%% the author to define a more concise list
-%% of authors' names for this purpose.
 \maketitle
 
-\section{Introduction}
-In the digital age, the internet has become a breeding ground for the dissemination of hate speech and extremist ideologies, fostering the formation of online hate networks \cite{schackmuth2018extremism, starbird_disinformations_2019}. These networks, characterized by their interconnected web of individuals sharing common ideologies rooted in hatred and discrimination, pose a significant threat to societal harmony and individual safety \cite{noauthor_stress_nodate}. Understanding the dynamics of these networks is paramount in combating the proliferation of hate speech and mitigating its harmful consequences \cite{liu_control_2016, cynthia_miller-idriss_hate_2020}. A science-informed approach is crucial as online groups quickly learn to adapt collectively to threats posed by content moderation \cite{johnson_hidden_2019, gelfand_cultural_2021, douek2022content}.
 
-This research looks into the intricate relationship between polarizing real-world events and the evolution of online hate networks \cite{rachel_brown_new_2018, cinelli_dynamics_2021}. By analysing the activities of hate communities online, this study aims to show how these networks undergo a transformation in the aftermath of pivotal events. Specifically, this research looks at the 2020 presidential election and the January 6 Capitol attack in the United States.
+The Internet is a breeding ground for hate \cite{schackmuth2018extremism, starbird_disinformations_2019}. Hate content and its supporters thrive in hate networks comprising an interconnected web of in-built  communities across multiple social media platforms \cite{johnson_hidden_2019}. Each in-built community (e.g. Telegram Channel, Gab Group, YouTube Channel) shows an ideology rooted in hatred and discrimination, and it can have  anywhere from a few to a few million members. 
+Any member of such a `hate community' (community A) can at any time cross-post content from another community (community B) and hence create a link (hyperlink) from A to B (see Fig. \ref{fig:hu3}A). Other members of A are then alerted to B's existence, and can visit community B to share their hate \cite{noauthor_stress_nodate,liu_control_2016, cynthia_miller-idriss_hate_2020,johnson_hidden_2019, gelfand_cultural_2021, douek2022content}. Reference \cite{Zheng_Sear_Illari_Restrepo_Johnson_2024} provides explicit examples of links and hate communities (nodes).
 
-The highly contentious 2020 US presidential election, exacerbated by the proliferation of misinformation and divisive rhetoric, served as a catalyst for amplifying existing tensions within online communities \cite{lee2022storm}. Subsequently, the violent insurrection at the Capitol on January 6, 2021, further underscored the potency of online platforms as breeding grounds for radicalization and mobilization.
+A `hate universe' is hence formed by the set of all such hate communities across all platforms -- together with the other communities that they directly link to (vulnerable mainstream, Fig. \ref{fig:hu3}A).
+It is a novel network-of-networks in which both the network structure and its content (hate narratives) co-evolve dynamically on similar timescales \cite{watts2004small}.
+While there have been many in-depth studies on the relationship between polarizing real-world events and the evolution of online hate \cite{rachel_brown_new_2018, cinelli_dynamics_2021,chen_why_2015, chen_why_2015_1, kim_trust_2013}, our focus on the dynamics of this hate universe at scale enables us to fill a gap in current understanding of how hate evolves globally around a local or national event such as an election. We focus here on the U.S. presidential election and choose the most recent case (2020) since it is the first in which many small and large platforms feature prominently, and its offline events included the  Capitol attack on the day that Congress certified the president-elect \cite{lee2022storm}. 
 
-Central to this investigation is the analysis of two key facets of online hate networks: the content disseminated within these networks and the underlying topology of the network. By examining shifts in hate themes within hate communities, we aim to discern patterns of adaptation in response to external triggers. Furthermore, by examining alterations in network topology, including changes in centrality, community structure, and clustering, we seek to work out the structural dynamics driving the evolution of online hate networks. Our study therefore contributes to a lesser-studied aspect of social media research: the structural effects at scale. When combined with other existing work that seeks to understand why people spread mis/disinformation online \cite{chen_why_2015, chen_why_2015_1, kim_trust_2013}, this growing body of work can be extremely useful in curtailing its rampant spread.
-
-\section{DATA}
-The data for this study was collected by the Dynamic Online Network Lab at George Washington University (GWU). Data collection commenced with the identification of online hate communities, followed by continuous monitoring for cross-posts. Initial identification of online hate communities was carried out in previously-published work \cite{lupu_offline_2023, velasquez_online_2021}. We refer to this for full discussions and definitions of "hate". 
-
-This study goes beyond prior work in its examination of cross-posts. For instance, if a user in a hate community posted a link to another community, a directed edge was established from the hate community towards the linked community.
-
-
-\begin{figure}[h]
+\begin{figure*}
   \centering
-  \includegraphics[width=\linewidth]{Images/Data_explaination (1).png}
-  \caption{Representation of how links are assigned in the network \\
-    \Description{Example to explain data}}
-\end{figure}
+  \includegraphics[width=\linewidth]{Images/fig1_hu3.png}
+  \caption{Hate universe. \textbf{A}: Schematic of how a hate community (node) on a given social media platform (given color) establishes a link (by sharing a URL for a piece of content) to another community (node) at a given time. A link from node A to node B means that members of community A are alerted to B's existence, and can visit community B to share hate. Each community is a platform-provided community: a Telegram Channel, a Gab Group, a YouTube Channel, etc. Top dotted box is the subset of communities that are identified as hate communities. These link together over time to form hate networks-of-networks. Bottom box represents communities that are directly linked to by hate communities but which are not themselves in the list of hate communities; hence, we label these as vulnerable mainstream. \textbf{B}: Empirically determined composition of the hate universe. Boxes show number of hate communities (nodes) in a given platform and the average number of members of each community. Edges shown are aggregated over time. \\
+    \Description{Schematic dynamic structures in the online hate network, as well as an actual visualization of the connections and quantities in this network}}
+    \label{fig:hu3}
+\end{figure*}
 
-While all the source nodes belong to identified hate communities, the target nodes may or may not belong to identified hate communities. 
+We build the hate universe using the same methodology as prior publications \cite{lupu_offline_2023,Zheng_Sear_Illari_Restrepo_Johnson_2024,velasquez_online_2021} but now expanded to more platforms. We define a hate community as one for which multiple subject matter experts determine its most recent activity displays hate towards at least one of the protected classes listed in the FBI's definition of hate crimes, or extreme racial identitarianism. Prior publications contain a full discussion and concrete examples \cite{lupu_offline_2023,Zheng_Sear_Illari_Restrepo_Johnson_2024,velasquez_online_2021}. We first  extracted an initial list of hate communities (see data provided) and monitored for cross-posts (links). This then led us to new communities and hence allowed us to grow a comprehensive final list of hate communities. Repeating this process in a semi-automated way eventually produced a crude representation of the entire public-facing hate universe across social media platforms (Fig. \ref{fig:hu3}B). 
+In this directed network (i.e. comprising links from one community to another), each source node is a hate community (Fig. \ref{fig:hu3}A top panel). If its target node is not on our hate community list, we label it as vulnerable mainstream: it is possible that it includes discriminatory content, but it had not at the time qualified to be on the hate community list.
 
-This study focuses on the period surrounding the 2020 U.S. presidential election and the events of January 6, 2021. Specifically, data was analyzed from November 1, 2020, to January 10, 2021. 
+We classify the text in the hate communities' posts using a trained natural language processing (NLP) model \cite{lupu_offline_2023} to identify types (`flavors') of hate. Seven were classified: race, gender, religion, antisemitism,  gender identity/sexual orientation (GISO), immigration, and ethnicity/ identitarian/nationalism (EIN) \cite{lupu_offline_2023}. This published method has been checked against human reviewers and has a high degree of accuracy \cite{lupu_offline_2023}.
 
-In addition to monitoring cross-posting activities within these hate communities, the posts were also classified to identify various types of hate speech prevalent within the posts. Seven types of hate speech were classified, targeting race, gender, religion, antisemitism,  gender identity/sexual orientation (GISO), immigration, and ethnicity/identitarian/nationalism (EIN). We refer to \cite{lupu_offline_2023} for full discussion of this automated classifier, but note that the method has been checked against human reviewers and has a high degree of accuracy.
+Our social media data collection is, like others, necessarily imperfect. However, the resulting hate universe does contain several billion individual accounts. Given that most of their owners are likely over the voting age in their respective countries, and given that more than 2 billion people worldwide are due to vote in the near term, it provides a crude first-cut. Our focus is on  changes in this hate universe's topology and content (i.e. narratives) through the 2020 presidential election (November 3) and  subsequent Capitol attack (January 6, 2021). We are not concerned here with the extent to which these changes have a causal effect on the offline events or are simply a response.
 
-\begin{figure}[h]
+\begin{figure*}
   \centering
-  \includegraphics[width=\linewidth]{Images/Data_Explaination.png}
-  \caption{An example of cross-post of a YouTube video in a Telegram channel identified as a hate community \\
-    \Description{Screenshots of a Telegram channel and YouTube video}}
-\end{figure}
+  \includegraphics[width=\linewidth]{Images/fig2_metrics.png}
+  \caption{Changes in key network metrics  surrounding events in the 2020 U.S. election period, specifically the actual date of the election (\textbf{A}) and the day of Congress' confirmation which is when the attack took place on the U.S. Capitol (\textbf{B}) \\
+    \Description{Plots and tables showing network metric changes before and after Nov. 3 (left) and Jan. 6 (right)}}
+    \label{fig:network-metrics}
+\end{figure*}
 
+\section*{Findings}
 
+Figure \ref{fig:network-metrics} shows there was a surge in the creation of hate links (i.e. links from hate communities) during both the election itself (November 2020) and the follow-up (January 2021). On November 3, the day of the election, the increase was 41.6\% compared to November 1. On November 7 when Joe Biden was declared president-elect, this number spiked even further at 68\%. An even larger spike surrounds January 6. Going forward in the digital age, the message of this for policymakers is that any event of seemingly only local or national interest has the capability to instantly trigger hate activity globally.
 
-\section{RESULTS}
-The analysis of the hate network following the 2020 presidential election on Nov 3, 2020, and the United States Capitol attack on Jan 6, 2021, sheds light on the complex interplay of online dynamics and real world events. Through an examination of network cohesion and the change in hate content, we discover compelling insights into the transformative forces at play within this digital hate ecosystem. This section looks into the changes observed within the network.
+\subsection*{Hate Universe's Structure Hardens}
+Just because links get individually added, does not automatically mean the hate universe as a whole will benefit in terms of hardening (strengthening) its structural cohesion. However, the lower panels of network measures in Fig. \ref{fig:network-metrics} show this is indeed exactly what happens. 
 
+The clustering coefficient, which is a standard measure that captures the tendency of nodes to form connected groups of three, jumped by 164.8\% after January 6. Nodes previously on the periphery of the core formed new connections, leading to a denser network with well-defined clusters. Hence, individual nodes within the core became more interconnected on average \cite{watts2004small}. The assortativity, which is a standard measure that captures the tendency of nodes to connect with other nodes that are similar in terms of their connectivity, also increased by 27\%. This further supports the notion of increased cohesion: individual communities (nodes) preferentially connected with others who shared similar network characteristics. These suggest a strengthening of existing ideologies within the network, fostering a more homogeneous environment that is then more resilient to outside intervention \cite{leifeld2018polarization, oehlers2021graph}.
 
-\begin{figure}[h]
+The changes in the number of communities and the size of the largest community (Fig. \ref{fig:network-metrics} lower panels) provide further evidence of  this network strengthening (hardening). The number of communities decreased by  19.8\%\, at the same time as the size of the largest community grew by 16.72\%, reflecting a convergence of smaller communities towards a single more dominant one. This evolution toward a more cohesive hate universe with a more unified ideology at scale, means it can better amplify the spread of hate speech or coordinated actions at scale. Most importantly, this is all essentially organic and hence not the result of top-down control by a single bad actor.
+
+These conclusions are further supported by visualizations employing the ForceAtlas2 layout \cite{Jacomy_Venturini_Heymann_Bastian_2014}. This layout algorithm assigns forces to nodes, attracting or repelling them based on their edges which act like springs: this means that the network's resulting visual appearance reflects its true structure at scale. The resulting visualizations (Fig.~\ref{fig:network-cohesion}A) reveal a notable shift towards a more cohesive network-of-networks structure -- in agreement with the metrics.
+
+\begin{figure*}
   \centering
-  \includegraphics[width=0.7\linewidth]{Images/Increase_in_hate_links_Nov1_2020.png}
-  \caption{Percentage increase in number of links relative to Nov. 1, 2020 \\
-    \Description{Line chart}}
-  \label{fig:nov2020}
-\end{figure}
+  \includegraphics[width=\linewidth]{Images/fig3_cohesion.png}
+  \caption{Hardening of hate universe's network-of-networks. \textbf{A}: Gephi visualization of the hate universe before and after January 6, 2021. The partial rings comprise dense clouds of vulnerable mainstream communities (nodes) with successively increasing numbers of links from the hate networks, hence creating orbital-like rings. \textbf{B}: Subset of  Telegram-connected networks before and after election day, show its key role as a binding agent. \\
+    \Description{Social media networks colored by platform}}
+    \label{fig:network-cohesion}
+\end{figure*}
 
-The initial observation that stood out was the substantial increase in the number of links within the network during both time intervals. On November 3, the day of the presidential elections, there was a notable surge in hate links, showing a 41.6\% increase compared to November 1. Subsequently, on November 7, when Joe Biden was declared president-elect, the number of links spiked even further, rising by 68\% compared to November 1.
-
-
-\begin{figure}[h]
+\begin{figure*}
   \centering
-  \includegraphics[width=0.7\linewidth]{Images/Increase_in_hate_links_Jan1_2021.png}
-  \caption{Percentage increase in number of links relative to Jan. 1, 2021 \\
-    \Description{Line chart}}
-  \label{fig:jan2021}
-\end{figure}
+  \includegraphics[width=\linewidth]{Images/fig4_flavors.png}
+  \caption{Hardening of hate universe's content around particular types (`flavors') of hate narratives. Results shown for the periods around the declaration of Biden as president-elect (\textbf{A}) and around January 6 (\textbf{B}). \\
+    \Description{Bar graphs showing percent changes in hate type following significant events}}
+    \label{fig:flavors-change}
+\end{figure*}
 
-We observed a similar spike in our network surrounding the events of the January 6th, 2021 Capitol attacks. On January 6, there was a significant increase in the number of links, rising by 67.59\% compared to January 1.
+\subsection*{Hate Universe's Narratives Harden}
 
-\subsection{Network Cohesion}
-Our analysis of the network following the Jan. 6, 2021 Capitol attacks reveals a significant increase in network cohesion. This tightening of connections is evident through three key network metrics: clustering coefficient, assortativity, and community dynamics.
+Just because the hate universe's structure becomes more cohesive does not automatically mean that the type of hate content that it contains should change -- or if it does, how it would change. Yet Fig. \ref{fig:flavors-change}A shows there was a significant uptick in hate speech targeting immigration, ethnicity, and antisemitism around November 7. In particular, there was a 269.5\% surge in anti-immigration sentiments, a 98.7\% rise in ethnically-based hatred, and a 117.57\% escalation in expressions of antisemitism from November 7-11 compared to November 2-6. A comparable surge in anti-immigration sentiments occurred around January 6 (Fig. \ref{fig:flavors-change}B). There was a 108.69\% rise in anti-immigration content between January 6-10 compared to January 1-5  2020. 
+
+These trends suggest an increase in immigration anxieties harbored by far-right communities, which often align with the Great Replacement conspiracy theory and attribution of perceived demographic shifts to Jewish influence \cite{obaidi2022great}.
+
+We also find strong correlations between  changes in the hate universe's structure and changes in its content -- specifically, correlations between  daily link count originating from specific social media platforms and hate content over the period November 1, 2020 to January 10, 2021 (see Supplementary Figure 1). For example, there is an increase in links originating from 4Chan, Gab, Twitter, while Telegram exhibits a strong correlation with instances of hate speech that target immigration, race, and gender/sexual identity (GISO).
+
+As well as showing how individual-level hate gets expressed collectively at scale, these findings reveal the following shortcomings in current practice and regulations:
+
+\noindent (1) Particular platforms can play different network roles in the hate universe, in particular smaller and/or less well-known ones such as Telegram (see discussion below). This suggests that current policies that focus only on particular platforms based on their popularity (e.g. Facebook, Twitter, or TikTok) or which treat all platforms the same, will not be effective in  curbing hate and other online harms. 
+
+\noindent (2) The type of hate content that surges around a real-world event is not necessarily the closest in theme to that event. Hence, the messaging of anti-hate campaigns ahead of an event should not focus exclusively on that event's theme. 
+
+In summary, the hate universe's rapid self-adaptation at scale, its wide array of target-ready mainstream communities, and the  variety of hate `flavors' that it offers them, suggest that each future election will provide it with a diverse set of new recruits globally while simultaneously strengthening (hardening) its   structure and narratives at scale. These  findings suggest that anti-hate policies ahead of nominally local or national events such as elections, should mix multiple hate themes (`flavors') and use the multi-platform hate universe map to target their impact at the global scale.  
 
 
-\begin{table}[ht]
-  \caption{Comparison of Network Metrics post Jan 6 2021 Capitol Attack}
-  \label{tab:freq_j6}
-  \small % Reduce font size
-  \setlength{\tabcolsep}{4pt} % Reduce spacing between columns
-  \begin{tabular}{cccc}
-    \toprule
-    \multirow{2}{*}{\makecell{Property}} & \multirow{2}{*}{\makecell{Pre Jan 6 \\ (Jan 1 to 5, 2021)}} & \multirow{2}{*}{\makecell{Post Jan 6 \\ (Jan 6 to 10, 2021)}} & \multirow{2}{*}{\makecell{\% Change}} \\
-     & & & \\
-    \midrule
-    \makecell{Number of \\ Communities} & 115 & 86 & -25.2\% \\
-    \addlinespace % Add space between rows
-    \makecell{Size of the \\ Largest Community}  & 5632 & 7068 & 25.5\% \\
-    \addlinespace % Add space between rows
-    \makecell{Clustering \\ Coefficient} & 0.011 & 0.028 & 159.2\% \\
-    \addlinespace % Add space between rows
-    \makecell{Assortativity} & -0.49 & -0.35 & 25.1\% \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+\subsection*{Key Role of Telegram}
+
+Telegram never features in U.S. Congressional hearings involving social media company representatives, nor does it feature in the E.U.'s flagship Digital Services Act that has recently come into operation. 
+However, Fig. \ref{fig:network-cohesion}B reveals Telegram's key role as a `glue' in the hate network's hardening, by showing the subset of the hate universe in which Telegram is a source or target node. 
+During November 4–7, there was a remarkable surge in connectivity within Telegram, as evidenced by a substantial 299\% increase in the number of connections involving Telegram compared to November 1–3 (from 592 to 2366). Telegram's role as a target node increased from 18.22\% to 33.47\%, while its role as a source node increased from 21.73\% to 37.24\%, as a percentage of all links present in the hate-to-hate sub-network. This highlights Telegram's growing significance as a central platform for communication and coordination among hate communities \cite{schulze2022far} and also aligns with growing concern among law enforcement agencies because of its association with `Q-anon' and `Pro-Trump Conspiracy theories' \cite{cnn2021,guhl2020safe,walther_telegram_2021}. 
+
+The Telegram community we call "TG\_\_122" in our data -- which is currently named "US Voter Fraud \& Coup-Ops Intel” -- is an interesting example. It was initially absent from the network during November 1-3, but then emerged and rapidly became one of the most crucial and interconnected nodes. "TG\_\_122" exhibits strong associations with two other Telegram channels, "TG\_\_218", a right-wing podcast,  and "TG\_\_146", a right-wing Telegram channel named "Exposing Cultural Marxism", both of which were highly active before November 3.
 
 
 
-The clustering coefficient, which measures the tendency of nodes (online communities) to form triangles (connected groups of three), jumped by a substantial 159\% after the Jan. 6 capitol attack. This dramatic rise suggests a significant shift in the network structure. Nodes previously on the periphery formed connections with their neighbors, leading to a denser network with well-defined clusters. This implies that individual nodes within the hate network became more interconnected and entrenched within their specific groups \cite{watts2004small}. 
-
-Furthermore, assortativity, which reflects the tendency of nodes to connect with similar nodes, also increased by 25.1\%. This rise in assortativity strengthens the notion of increased cohesion and homophily; Individuals within the network preferentially connected with others who shared characteristics. This potentially indicates a strengthening of existing ideologies within the network, fostering a more homogenous and an environment resilient to outside intervention \cite{leifeld2018polarization, oehlers2021graph}.  
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{Images/Largest_Connected_component_size_Jan6.png}
-  \caption{Size of the largest connected component on each day during Jan. 1 - 10, 2021 \\
-    \Description{Line Graph showing size of the largest connected component}}
-    \label{fig:jan2021connectedcomponet}
-\end{figure}
-
-
-Finally, the observed changes in the number of communities and the size of the largest community paint a convincing picture of network consolidation. The number of communities decreased by a significant 25.2\%, hinting at smaller communities merging to form larger communities.  Furthermore, the size of the largest community grew by 25.5\%, suggesting a convergence of individual communities towards a more dominant, potentially extreme, viewpoint. This dynamic implies a less diverse network with a more unified ideology, potentially amplifying the spread of hate speech or coordinated actions.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{Images/Jan6_Cohesion .png}
-  \caption{Visualization of the pre-Capitol attack network and the post-Capitol attack network \\
-    \Description{Network visualization colored by social networking sites}}
-    \label{fig:jan2021networkviz}
-    
-\end{figure}
-
-These findings on network metrics are further corroborated by visualizations of the network before and after the event. Network visualization tools like Gephi can visualize the structure and connectivity of the network. Examining these visualizations reveals a shift towards a more cohesively connected network structure.
-
-The trends observed following the November 3, 2020 elections exhibit a similar pattern, albeit with smaller variations compared to those that appeared after the January 6 Capitol attack.
-
-
-\begin{table}[ht]
-  \caption{Comparison of Network Metrics post the 2020 US Presidential Election}
-  \label{tab:freq_election}
-  \small % Reduce font size
-  \setlength{\tabcolsep}{4pt} % Reduce spacing between columns
-  \begin{tabular}{cccc}
-    \toprule
-    \multirow{2}{*}{\makecell{Property}} & \multirow{2}{*}{\makecell{Pre Nov 3 \\ (Nov 1 to 2, 2020)}} & \multirow{2}{*}{\makecell{Post Nov3 \\ (Nov 3 to 4, 2020)}} & \multirow{2}{*}{\makecell{\% Change}} \\
-     & & & \\
-    \midrule
-    \makecell{Number of \\ Communities} & 70 & 68 & -2.85\% \\
-    \addlinespace % Add space between rows
-    \makecell{Size of the \\ Largest Community}  & 4334 & 4726 & 9.0\% \\
-    \addlinespace % Add space between rows
-    \makecell{Clustering \\ Coefficient} & 0.012 & 0.014 & 12.4\% \\
-    \addlinespace % Add space between rows
-    \makecell{Assortativity} & -0.52 & -0.49 & 5.3\% \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-
-The relatively smaller changes observed following the 2020 elections, compared to the upheaval witnessed after the January 6 Capitol attack, could potentially be attributed to the elections being a less unexpected event, thus resulting in more moderate alterations in the network metrics.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{Images/Largest_Connected_component_size_Nov7.png}
-  \caption{Size of the largest connected component on each day during Nov. 1 - 10, 2020 \\
-    \Description{Line Graph showing size of the largest connected component}}
-    \label{fig:nov2020connectedcomponet}
-\end{figure}
-
-\subsection{Change in Hate Content}
-
-Following the analysis of network cohesion, this subsection explores the changes in hate content within the network during the same period (November 1, 2020 – January 10, 2021). Here, "hate content" refers to speech targeting individuals or groups based on characteristics like immigration status, race, or gender identity.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{Images/Change_hate_type_nov7.png}
-  \caption{Percentage change observed in the hate network after Nov. 7, 2020. \\
-    \Description{Network visualization colored by social networking sites}}
-    \label{fig:nov2020hatechange}
-\end{figure}
-
-Following the declaration of Joe Biden as president-elect on November 7, 2020, a significant uptick in hate speech targeting immigration, ethnicity, and antisemitism was detected within the network. Particularly noteworthy were the observed increases: a 269.5\% surge in anti-immigration sentiments, a 98.7\% rise in ethnically-based hatred, and a 117.57\% escalation in expressions of antisemitism between November 7 and November 11, compared to November 2 to November 6. These trends are indicative of the immigration anxieties harbored by far-right communities, which often align with the Great Replacement conspiracy theory, attributing perceived demographic shifts to Jewish influence \cite{obaidi2022great}. 
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{Images/Change_hate_type_Jan6.png}
-  \caption{Percentage change observed in the hate network after Jan 6, 2021.\\
-    \Description{Network visualization colored by social networking sites}}
-    \label{fig:jan2021hatechange}
-\end{figure}
-
-Following the Capitol attack on January 6th, a comparable surge in anti-immigration sentiments was evident, with a notable 108.69\% rise in posts containing anti-immigration messages between January 6th and January 10th, in contrast to the period of January 1st to January 5th, 2020.
-
-The analysis also reveals a strong correlation between the daily link counts originating from specific social networks and the incidence of hate speech detected within the network spanning from November 1, 2020, to January 10, 2021.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{Images/Hatetype_SNS_corrplot.png}
-  \caption{Correlation between count of links origination from different social networking sites and count of hate type detected in the network  \\
-    \Description{Network visualization colored by social networking sites}}
-    \label{fig:snshatecorrelation}
-\end{figure}
-
-
-Specifically, an increase in links originating from 4chan, Gab, Twitter, and Telegram exhibits a strong correlation with instances of hate speech targeting immigration, race, and gender/sexual identity (GISO).
-While the correlation suggests a potential link between these events and the rise in hate content, further investigation is needed to determine causality.
-
-
-
-\subsection{Role of Telegram}
-
-Following the Presidential Elections on Nov. 3, Telegram emerged as a significant player in shaping the dynamics of the hate network. During Nov. 4–7, there was a remarkable surge in connectivity within the network, evidenced by a substantial 299\% increase in the number of connections involving Telegram compared to November 1–3, 2020 (from 592 to 2366). Telegram's importance both as a target and source node within the hate network saw a considerable rise from this volume perspective. Specifically, Telegram's representation as a target node increased from 18.22\% to 33.47\%, while its presence as a source node increased from 21.73\% to 37.24\% of all links present in the hate core network post-election. This rise in Telegram's connections highlights its growing significance as a central platform for communication and coordination among hate groups within the network \cite{schulze2022far}.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{Images/Telegram_Network_Nov3.png}
-  \caption{Network where Telegram is either the source or target node\\
-    \Description{Network visualization colored by social networking sites}}
-    \label{fig:telegramnetwork}
-\end{figure}
-
-One Telegram community, identified by the codename "TG\_\_122", warrants particular attention. "TG\_\_122" which is now named "US Voter Fraud \& Coup-Ops Intel 2020 – 2022” was initially absent from the network between November 1 and 3, but rapidly ascended to become one of the most crucial and interconnected nodes within the November 4–7 network. Moreover, "TG\_\_122" exhibits strong associations with two other Telegram channels, "TG\_\_218", a right-wing podcast,  and "TG\_\_146", a right-wing telegram channel named "Exposing Cultural Marxism", both of which were highly active in the network before November 3. The substantial influx of links directed towards "TG\_\_122" signifies its pivotal role as a central hub for disseminating dis/misinformation concerning the presidential election and alleged instances of voter fraud.
-
-
-Moreover, the rise of Telegram is particularly fascinating given its relatively limited ubiquity compared to mainstream social networking sites in the United States. However, as reported by CNN, Telegram has emerged as a source of concern for law enforcement agencies due to its association with `Q-anon' and `Pro-Trump Conspiracy theories' \cite{cnn2021}. Despite its niche presence, Telegram has become a preferred platform for individuals seeking to propagate hate speech and coordinate malicious activities \cite{guhl2020safe,walther_telegram_2021}. This association further solidifies Telegram's significant influence on the perpetuation of extremist ideologies and the dissemination of hate speech within the studied network.
-
-
-
-
-
-\section{Conclusion}
-
-This study illuminates the changes in online hate networks in response to significant real-world events, particularly the 2020 U.S. presidential election and the January 6 Capitol attack.
-
-Firstly, an increase in hate speech targeting immigration, ethnicity, and antisemitism following pivotal events, indicative of underlying societal tensions and extremist ideologies. The observed correlations between specific social networks and the incidence of hate speech highlight the role of online platforms in propagating extremist narratives. Secondly, network cohesion significantly increased post-attack, evidenced by tighter clustering and homophily within hate networks. This suggests a consolidation of extremist ideologies and a more resilient environment for hate speech dissemination.
-
-Furthermore, the rise of Telegram as a central hub within hate networks underscores the evolving landscape of online extremism. Despite its niche presence in the United States, Telegram has emerged as a significant platform for coordinating malicious activities and disseminating hate speech.
-
-Overall, this research emphasizes the urgent need for proactive measures to combat online extremism and promote digital resilience. By understanding the mechanisms driving the evolution of online hate networks, policymakers, researchers, and platform providers can develop targeted interventions to mitigate the harmful consequences of hate speech online and safeguard societal harmony and individual safety.
+\vskip1in
 
 \section{Data availability}
-The datasets used in this study contain sensitive information from social media platforms. To comply with data protection standards and avoid potential misuse, the raw data cannot be shared publicly; however, the processed derivative datasets, which can be used to reproduce the results in the study, are available at \url{https://github.com/gwdonlab/data-access}.
+The datasets used in this study are at \url{https://github.com/gwdonlab/data-access/tree/elections-online-hate/elections-online-hate}. The original data contain sensitive information from social media platforms: hence to comply with data protection standards and avoid potential misuse, the raw data cannot be shared publicly. However, the processed derivative datasets  can be used to reproduce the results in the study.
 
 
 \section{Code availability}
 
-Figure \ref{fig:nov2020}, \ref{fig:jan2021}, \ref{fig:jan2021connectedcomponet}, \ref{fig:jan2021hatechange}, \ref{fig:nov2020connectedcomponet}, \ref{fig:nov2020hatechange}, \ref{fig:snshatecorrelation} were created using Python (Matplotlib \cite{Hunter:2007}). The code is available at \url{https://github.com/gwdonlab/data-access}.
-The network visualization \ref{fig:jan2021networkviz} was created using Gephi and the network visualization \ref{fig:telegramnetwork} was create using Pyviz.
-Together, this provides readers with access to the minimum dataset that is necessary to interpret, verify, and extend the research in the article.
+Plots were created using Python (Matplotlib \cite{Hunter:2007}). The code is available at \url{https://github.com/gwdonlab/data-access}.
+The network visualization in Fig. \ref{fig:network-cohesion}a was created using Gephi and the network visualization in Fig.  \ref{fig:network-cohesion}b was created using Python (PyVis).
+Together, this provides readers with access to the minimum dataset that is necessary to interpret, verify, and extend the research in the article. Cosmetic changes to figures were carried out in Adobe Illustrator, a commercially available piece of software.
 
 \section{Funding}
 
